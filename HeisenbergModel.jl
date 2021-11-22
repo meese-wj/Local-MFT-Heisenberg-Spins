@@ -10,6 +10,26 @@ end
 temperature(params::ModelParameters) = 1/params.β
 
 """
+Initialize lattice with random spins, but fix the boundary
+"""
+function initialize_spins!( lattice_spins, latt_params )
+    left_boundary =  Spin3(0.,0.,1.)
+    right_boundary = -1. * left_boundary
+    for ydx ∈ 1:latt_params.Ly, xdx ∈ 1:latt_params.Lx
+        if xdx <= num_boundary_x_per_side
+            lattice_spins[site] = copy( left_boundary )
+        elseif  xdx > latt_params.Lx - num_boundary_x_per_side
+            lattice_spins[site] = copy(right_boundary)
+        end
+
+        # Randomize the bulk 
+        vector = Spin3( -1. + 2. * rand(), -1. + 2. * rand(), -1. + 2. * rand() )
+        lattice_spins[site] = unit_spin3(vector)
+    end
+    return
+end
+
+"""
 Calculate the effective field for the
 Heisenberg model with nearest neighbor interactions
 only. Here, Jex > 0 is antiferromagnetic.

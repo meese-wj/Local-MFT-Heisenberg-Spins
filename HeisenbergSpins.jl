@@ -14,4 +14,4 @@ import Base.*
 ⋅(A::Spin3, B::Spin3) = A.S₁ * B.S₁ + A.S₂ * B.S₂ + A.S₃ * B.S₃
 abs2(A::Spin3) = A ⋅ A
 abs(A::Spin3) = sqrt( abs2(A) )
-unit_spin3(A::Spin3) = A * 1./abs(A)
+unit_spin3(A::Spin3) = A * 1. / abs(A)
