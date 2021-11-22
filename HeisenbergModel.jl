@@ -2,6 +2,8 @@ include("HeisenbergSpins.jl")
 include("LangevinFunction.jl")
 include("LatticeSetup.jl")
 
+import Random
+
 struct ModelParameters
     Jex::Float64
     β::Float64
@@ -24,7 +26,7 @@ function initialize_spins!( lattice_spins, latt_params )
 
         # Randomize the bulk 
         vector = Spin3( -1. + 2. * rand(), -1. + 2. * rand(), -1. + 2. * rand() )
-        lattice_spins[site] = unit_spin3(vector)
+        lattice_spins[site] = copy(unit_spin3(vector))
     end
     return
 end

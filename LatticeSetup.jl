@@ -23,11 +23,11 @@ struct Site2D
     yind::Int
 end
 
-total_sites( latt_params::LatticeParameters ) = Lx * Ly
+total_sites( latt_params::LatticeParameters ) = latt_params.Lx * latt_params.Ly
 total_boundary_sites( latt_params::LatticeParameters ) = 2 * num_boundary_x_per_side * latt_params.Ly
 total_bulk_sites( latt_params::LatticeParameters ) = total_sites(latt_params) - total_boundary_sites(latt_params)
 site_index( site::Site2D, latt_params::LatticeParameters ) = (site.yind - 1) * latt_params.Lx + site.xind
-function site_coords( index, latt_params::LatticeParameters ) 
+function site_coords( index::Int, latt_params::LatticeParameters ) 
     xind = mod(index, latt_params.Lx)
     endtrue = xind == 0
     xind = xind * convert(Int, !endtrue) + latt_params.Lx * convert(Int, endtrue)
