@@ -18,10 +18,11 @@ function initialize_spins!( lattice_spins, latt_params )
     left_boundary =  Spin3(0.,0.,1.)
     right_boundary = -1. * left_boundary
     for ydx ∈ 1:latt_params.Ly, xdx ∈ 1:latt_params.Lx
+        site = site_index( Site2D(xdx, ydx), latt_params )
         if xdx <= num_boundary_x_per_side
             lattice_spins[site] = copy( left_boundary )
         elseif  xdx > latt_params.Lx - num_boundary_x_per_side
-            lattice_spins[site] = copy(right_boundary)
+            lattice_spins[site] = copy( right_boundary )
         end
 
         # Randomize the bulk 
