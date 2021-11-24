@@ -41,10 +41,8 @@ function nearest_neighbor_table( latt_params::LatticeParameters ; num_neighbors 
     neighbors = Array{Int}(undef, total_sites(latt_params), num_neighbors)
     for site ∈ 1:total_sites(latt_params)
         coords = site_coords( site, latt_params )
-        @show site, coords
         # Populate the neighbors for the boundaries with the boundary_neighbor_value
         if coords.xind <= num_boundary_x_per_side || coords.xind > latt_params.Lx - num_boundary_x_per_side
-            @show site, coords, coords.xind
             for nn ∈ 1:num_neighbors 
                 neighbors[site, nn] = boundary_neighbor_value 
             end
