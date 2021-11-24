@@ -11,7 +11,7 @@ include("FixedPointIteration.jl")
 
 function local_mft_heisenberg_main()
     latt_params  = LatticeParameters( 200, 1 )
-    model_params = ModelParameters( -1., 10. )
+    model_params = ModelParameters( -1., 50. )
 
     nearest_neighbors = nearest_neighbor_table( latt_params )
     lattice_spins = Array{Spin3}( undef, total_sites( latt_params ) )

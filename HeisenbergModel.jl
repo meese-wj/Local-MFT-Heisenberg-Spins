@@ -26,7 +26,7 @@ function initialize_spins!( lattice_spins, latt_params )
         else
             # Randomize the bulk 
             vector = Spin3( -1. + 2. * rand(), -1. + 2. * rand(), -1. + 2. * rand() )
-            # vector = Spin3(1., 1., 1.)
+            vector = Spin3(1., 1., 1.)
             lattice_spins[site] = copy(unit_spin3(vector))
         end
     end
