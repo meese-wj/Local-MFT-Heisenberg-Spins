@@ -54,6 +54,7 @@ function local_mft_heisenberg_main()
     model_params = ModelParameters( -1., 1000., 0.01 )
 
     nearest_neighbors = nearest_neighbor_table( latt_params )
+    display(nearest_neighbors)
     lattice_spins = Array{Spin3}( undef, total_sites( latt_params ) )
     @time initialize_spins!(lattice_spins, latt_params, model_params)
 

@@ -53,7 +53,7 @@ function nearest_neighbor_table( latt_params::LatticeParameters ; num_neighbors 
             # Cover the periodicity
             neighbor_y = (coords.yind + 1) * convert(Int, coords.yind != latt_params.Ly) + 1 * convert(Int, coords.yind == latt_params.Ly)
             neighbors[site, 3] = site_index( Site2D( coords.xind, neighbor_y ), latt_params )
-            neighbor_y = (coords.yind - 1) * convert(Int, coords.yind == 1) + latt_params.Ly * convert(Int, coords.yind == 1)
+            neighbor_y = (coords.yind - 1) * convert(Int, coords.yind != 1) + latt_params.Ly * convert(Int, coords.yind == 1)
             neighbors[site, 4] = site_index( Site2D( coords.xind, neighbor_y ), latt_params )
         end
     end
@@ -75,7 +75,7 @@ function next_nearest_neighbor_table( latt_params::LatticeParameters ; num_neigh
         else
             # Otherwise proceed as planned. The periodicity in y must be accounted for.
             # Go backwards first. 
-            neighbor_y = (coords.yind - 1) * convert(Int, coords.yind == 1) + latt_params.Ly * convert(Int, coords.yind == 1)
+            neighbor_y = (coords.yind - 1) * convert(Int, coords.yind != 1) + latt_params.Ly * convert(Int, coords.yind == 1)
             neighbors[site, 1] = site_index( Site2D( coords.xind - 1, neighbor_y ), latt_params )
             neighbors[site, 2] = site_index( Site2D( coords.xind + 1, neighbor_y ), latt_params )
             # Now go forwards along y
