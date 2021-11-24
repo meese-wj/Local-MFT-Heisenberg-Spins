@@ -33,7 +33,7 @@ function plot_spin_chain( yindex, latt_params, mft_spins )
 end
 
 function local_mft_heisenberg_main()
-    latt_params  = LatticeParameters( 6, 1 )
+    latt_params  = LatticeParameters( 7, 1 )
     model_params = ModelParameters( -1., 1000. )
 
     nearest_neighbors = nearest_neighbor_table( latt_params )

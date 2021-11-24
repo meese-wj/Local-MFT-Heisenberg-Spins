@@ -26,9 +26,7 @@ function initialize_spins!( lattice_spins, latt_params )
         else
             # Randomize the bulk 
             vector = Spin3( -1. + 2. * rand(), -1. + 2. * rand(), -1. + 2. * rand() )
-            # vector = Spin3(1., 1., 1.)
-            vector = Spin3( sin( π*(xdx - 3.)/(latt_params.Lx - 4.) ), 0., cos( π*(xdx - 3.)/(latt_params.Lx - 4.) ) )
-            @show (xdx, vector)
+            # vector = Spin3( sin( π*(xdx - 2.)/(latt_params.Lx - 2.) ), 0., cos( π*(xdx - 2.)/(latt_params.Lx - 2.) ) )
             lattice_spins[site] = copy(unit_spin3(vector))
         end
     end
@@ -40,9 +38,13 @@ Calculate the effective field for the
 Heisenberg model with nearest neighbor interactions
 only. Here, Jex > 0 is antiferromagnetic.
 """
-function effective_field_per_site( site, lattice_spins, params::ModelParameters, nearest_neighbors )
+function effective_field_per_site( site, lattice_spins, params::ModelParameters, nearest_neighbors, one_d )
     eff_field = Spin3(0., 0., 0.)
-    for nn ∈ 1:length(nearest_neighbors[site, :])
+    num_neighbors = length(nearest_neighbors[site, :])
+    if one_d
+        num_neighbors = 2
+    end
+    for nn ∈ 1:num_neighbors
         eff_field += -params.Jex * lattice_spins[ nearest_neighbors[site, nn] ]
     end
     return eff_field 
@@ -51,9 +53,10 @@ end
 """
 Calculate the MFT spin at the site 
 """
-function mft_spin_per_site( site, lattice_spins, params::ModelParameters, nearest_neighbors )
-    eff_field = effective_field_per_site(site, lattice_spins, params, nearest_neighbors)
-    return unit_spin3( eff_field ) * LangevinFunction( abs(eff_field), params.β )
+function mft_spin_per_site( site, lattice_spins, params::ModelParameters, nearest_neighbors, one_d )
+    eff_field = effective_field_per_site(site, lattice_spins, params, nearest_neighbors, one_d)
+    output = unit_spin3( eff_field ) * LangevinFunction( abs(eff_field), params.β )
+    return output
 end
     
 
@@ -64,7 +67,7 @@ function mft_lattice( lattice_spins, model_params::ModelParameters, latt_params:
     new_spins = copy(lattice_spins)
     for site ∈ 1:total_sites(latt_params)
         if boundary_neighbor_value != nearest_neighbors[site, 1]
-            new_spins[ site ] = mft_spin_per_site( site, lattice_spins, model_params, nearest_neighbors )
+            new_spins[ site ] = mft_spin_per_site( site, lattice_spins, model_params, nearest_neighbors, latt_params.Ly == 1 )
         end
     end
     return new_spins

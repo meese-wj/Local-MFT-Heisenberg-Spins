@@ -8,7 +8,7 @@ Fixed-point iteration solver.
     * args are variadic input parameters passed to func
     * The tolerance and max iterations may need tuning.
 """
-function FixedPointIteration( func, metric, x₀, args...; tolerance=1e-8, maxiter=5000 )
+function FixedPointIteration( func, metric, x₀, args...; tolerance=1e-10, maxiter=500 )
     old_point = copy(x₀) 
     new_point = zeros( size(x₀) )
     error = 1.
