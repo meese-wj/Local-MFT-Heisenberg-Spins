@@ -2,11 +2,12 @@ include("HeisenbergSpins.jl")
 include("LangevinFunction.jl")
 include("LatticeSetup.jl")
 
-import Random
+using Random
 
 struct ModelParameters
     Jex::Float64
     β::Float64
+    initial_randomness::Float64
 end
 
 temperature(params::ModelParameters) = 1/params.β
@@ -14,7 +15,7 @@ temperature(params::ModelParameters) = 1/params.β
 """
 Initialize lattice with random spins, but fix the boundary
 """
-function initialize_spins!( lattice_spins, latt_params )
+function initialize_spins!( lattice_spins, latt_params, model_params )
     left_boundary =  Spin3(0.,0.,1.)
     right_boundary = -1. * left_boundary
     for ydx ∈ 1:latt_params.Ly, xdx ∈ 1:latt_params.Lx
@@ -25,8 +26,8 @@ function initialize_spins!( lattice_spins, latt_params )
             lattice_spins[site] = copy( right_boundary )
         else
             # Randomize the bulk 
-            vector = Spin3( -1. + 2. * rand(), -1. + 2. * rand(), -1. + 2. * rand() )
-            # vector = Spin3( sin( π*(xdx - 2.)/(latt_params.Lx - 2.) ), 0., cos( π*(xdx - 2.)/(latt_params.Lx - 2.) ) )
+            vector = Spin3( sin( π*(xdx - 2.)/(latt_params.Lx - 2.) ), 0., cos( π*(xdx - 2.)/(latt_params.Lx - 2.) ) )
+            vector += model_params.initial_randomness * Spin3( -1. + 2. * rand(), -1. + 2. * rand(), -1. + 2. * rand() )
             lattice_spins[site] = copy(unit_spin3(vector))
         end
     end
@@ -82,5 +83,5 @@ function average_spin_difference( field1, field2 )
     for spin ∈ diff
         error += abs2(spin)
     end
-    return sqrt(error)
+    return sqrt(error) / length(diff)
 end
