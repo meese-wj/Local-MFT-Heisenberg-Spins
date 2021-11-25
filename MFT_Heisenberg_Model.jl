@@ -6,6 +6,9 @@ the Heisenberg model.
 using Revise
 using PyPlot
 
+PyPlot.rc("xtick", direction="in")
+PyPlot.rc("ytick", direction="in")
+
 include("HeisenbergModel.jl")
 include("FixedPointIteration.jl")
 
@@ -18,19 +21,32 @@ function plot_spin_chain( yindex, latt_params, mft_spins )
     end
     
     xvalues = LinRange(1, latt_params.Lx, latt_params.Lx)
+    marker = "o"
+    if latt_params.Lx > 50
+        marker = "None"
+    end
 
     fig, ax = PyPlot.subplots(3,1, figsize=(6,6), sharex=true, sharey=true)
-    ax[1].plot( xvalues, mft_S[:,1], marker="o", mec="k", clip_on=false, zorder=20 )
+    ax[1].plot( xvalues, mft_S[:,1], marker=marker, mec="k", clip_on=false, zorder=20 )
     ax[1].set_ylabel(L"$\left\langle S^x(x) \right\rangle$")
     
-    ax[2].plot( xvalues, mft_S[:,2], marker="o", mec="k", clip_on=false, zorder=20 )
+    ax[2].plot( xvalues, mft_S[:,2], marker=marker, mec="k", clip_on=false, zorder=20 )
     ax[2].set_ylabel(L"$\left\langle S^y(x) \right\rangle$")
     
-    ax[3].plot( xvalues, mft_S[:,3], marker="o", mec="k", clip_on=false, zorder=20 )
+    ax[3].plot( xvalues, mft_S[:,3], marker=marker, mec="k", clip_on=false, zorder=20 )
     ax[3].set_ylabel(L"$\left\langle S^z(x) \right\rangle$")
+
+    ymin, ymax = ax[3].get_ylim()
+    for component ∈ 1:3
+        left_boundary = LinRange(1, 2, 10)
+        right_boundary = LinRange(latt_params.Lx - 1, latt_params.Lx, 10)
+        ax[component].fill_between( left_boundary, ymin .+  0 .* left_boundary , ymax .+ 0 .* left_boundary, color = "orange", alpha=0.3 )
+        ax[component].fill_between( right_boundary, ymin .+  0 .* right_boundary , ymax .+ 0 .* right_boundary, color = "orange", alpha=0.3 )
+    end
 
     ax[3].set_xlabel(L"Site along chain $x$")
     ax[3].set_xlim(1, latt_params.Lx)
+    ax[3].set_ylim(ymin, ymax)
     fig.tight_layout()
     PyPlot.show()
 end
@@ -50,11 +66,10 @@ function plot_error_evolution( all_errors )
 end
 
 function local_mft_heisenberg_main()
-    latt_params  = LatticeParameters( 10, 3 )
+    latt_params  = LatticeParameters( 50, 3 )
     model_params = ModelParameters( -1., 1000., 0.01 )
 
     nearest_neighbors = nearest_neighbor_table( latt_params )
-    display(nearest_neighbors)
     lattice_spins = Array{Spin3}( undef, total_sites( latt_params ) )
     @time initialize_spins!(lattice_spins, latt_params, model_params)
 
