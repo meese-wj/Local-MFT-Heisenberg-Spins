@@ -16,7 +16,7 @@ function local_mft_heisenberg_main()
 
     nearest_neighbors = nearest_neighbor_table( latt_params )
     lattice_spins = Array{Spin3}( undef, total_sites( latt_params ) )
-    @time initialize_spins!(lattice_spins, latt_params, model_params)
+    initialize_spins!(lattice_spins, latt_params, model_params)
     iteration_scheme = xy_plane_iteration_x_boundaries(latt_params)
     iteration_scheme = nothing
 
