@@ -134,6 +134,15 @@ my_gradient = mpl_colors.LinearSegmentedColormap.from_list("my_gradient", (
                                                             (0.750, (0.780, 0.012, 0.051)),
                                                             (1.000, (0.988, 0.290, 0.325))))
 
+
+blue_orange_gradient = mpl_colors.LinearSegmentedColormap.from_list("blue_orange_gradient", (
+                                                                    # Edit this gradient at https://eltos.github.io/gradient/#4C71FF-0025B3-000000-B74A01-FF902C
+                                                                    (0.000, (0.298, 0.443, 1.000)),
+                                                                    (0.250, (0.000, 0.145, 0.702)),
+                                                                    (0.500, (0.000, 0.000, 0.000)),
+                                                                    (0.750, (0.780, 0.431, 0.012)),
+                                                                    (1.000, (0.988, 0.659, 0.290))))
+
 """
 Plot spin colormap
 """
@@ -149,16 +158,17 @@ function plot_spin_colormap(latt_params, mft_spins)
     end
 
     z_spin_min, z_spin_max = minimum(Sz_values), maximum(Sz_values)
+    the_cmap = blue_orange_gradient
 
     fig, axs = PyPlot.subplots(1, 3, sharex=true, sharey=true)
-    axs[1].imshow( Sx_values', origin="lower", vmin = z_spin_min, vmax = z_spin_max, cmap=my_gradient, extent=[1, latt_params.Lx, 1, latt_params.Ly] )
+    axs[1].imshow( Sx_values', origin="lower", vmin = z_spin_min, vmax = z_spin_max, cmap=the_cmap, extent=[1, latt_params.Lx, 1, latt_params.Ly] )
     axs[1].set_title(L"$\left\langle S^x(x,y)\right\rangle$")
     axs[1].set_ylabel(L"$y$")
     axs[1].set_xlabel(L"$x$")
-    axs[2].imshow( Sy_values', origin="lower", vmin = z_spin_min, vmax = z_spin_max, cmap=my_gradient, extent=[1, latt_params.Lx, 1, latt_params.Ly] )
+    axs[2].imshow( Sy_values', origin="lower", vmin = z_spin_min, vmax = z_spin_max, cmap=the_cmap, extent=[1, latt_params.Lx, 1, latt_params.Ly] )
     axs[2].set_xlabel(L"$x$")
     axs[2].set_title(L"$\left\langle S^y(x,y)\right\rangle$")
-    sz_im = axs[3].imshow( Sz_values', origin="lower", vmin = z_spin_min, vmax = z_spin_max, cmap=my_gradient, extent=[1, latt_params.Lx, 1, latt_params.Ly] )
+    sz_im = axs[3].imshow( Sz_values', origin="lower", vmin = z_spin_min, vmax = z_spin_max, cmap=the_cmap, extent=[1, latt_params.Lx, 1, latt_params.Ly] )
     axs[3].set_xlabel(L"$x$")
     axs[3].set_title(L"$\left\langle S^z(x,y)\right\rangle$")
 
