@@ -81,13 +81,13 @@ function plot_spin_chain( yindex, latt_params, mft_spins )
 
     fig, ax = PyPlot.subplots(3,1, figsize=(6,6), sharex=true, sharey=true)
     ax[1].plot( xvalues, mft_S[yindex, :, 1], marker=marker, mec="k", clip_on=false, zorder=20 )
-    ax[1].set_ylabel(L"$\left\langle S^x(x) \right\rangle$")
+    ax[1].set_ylabel("\$\\left\\langle S^x(x, $yindex) \\right\\rangle\$")
     
     ax[2].plot( xvalues, mft_S[yindex, :, 2], marker=marker, mec="k", clip_on=false, zorder=20 )
-    ax[2].set_ylabel(L"$\left\langle S^y(x) \right\rangle$")
+    ax[2].set_ylabel("\$\\left\\langle S^y(x, $yindex) \\right\\rangle\$")
     
     ax[3].plot( xvalues, mft_S[yindex, :, 3], marker=marker, mec="k", clip_on=false, zorder=20 )
-    ax[3].set_ylabel(L"$\left\langle S^z(x) \right\rangle$")
+    ax[3].set_ylabel("\$\\left\\langle S^z(x, $yindex) \\right\\rangle\$")
 
     ax = plot_boundary_spins(ax, 2, latt_params)
 
@@ -125,6 +125,15 @@ function plot_spin_arrows(latt_params, mft_spins)
     PyPlot.show()    
 end
 
+# Define a colormap for use in plotting the spins
+my_gradient = mpl_colors.LinearSegmentedColormap.from_list("my_gradient", (
+                                                            # Edit this gradient at https://eltos.github.io/gradient/#4C71FF-0025B3-000000-C7030D-FC4A53
+                                                            (0.000, (0.298, 0.443, 1.000)),
+                                                            (0.250, (0.000, 0.145, 0.702)),
+                                                            (0.500, (0.000, 0.000, 0.000)),
+                                                            (0.750, (0.780, 0.012, 0.051)),
+                                                            (1.000, (0.988, 0.290, 0.325))))
+
 """
 Plot spin colormap
 """
@@ -139,29 +148,35 @@ function plot_spin_colormap(latt_params, mft_spins)
         Sz_values[coords.xind, coords.yind] = mft_spins[site].S₃
     end
 
-    my_gradient = mpl_colors.LinearSegmentedColormap.from_list("my_gradient", (
-                                                                # Edit this gradient at https://eltos.github.io/gradient/#4C71FF-0025B3-000000-C7030D-FC4A53
-                                                                (0.000, (0.298, 0.443, 1.000)),
-                                                                (0.250, (0.000, 0.145, 0.702)),
-                                                                (0.500, (0.000, 0.000, 0.000)),
-                                                                (0.750, (0.780, 0.012, 0.051)),
-                                                                (1.000, (0.988, 0.290, 0.325))))
-
     z_spin_min, z_spin_max = minimum(Sz_values), maximum(Sz_values)
 
     fig, axs = PyPlot.subplots(1, 3, sharex=true, sharey=true)
-    axs[1].imshow( Sx_values', origin="lower", vmin = z_spin_min, vmax = z_spin_max, cmap=my_gradient )
+    axs[1].imshow( Sx_values', origin="lower", vmin = z_spin_min, vmax = z_spin_max, cmap=my_gradient, extent=[1, latt_params.Lx, 1, latt_params.Ly] )
     axs[1].set_title(L"$\left\langle S^x(x,y)\right\rangle$")
     axs[1].set_ylabel(L"$y$")
     axs[1].set_xlabel(L"$x$")
-    axs[2].imshow( Sy_values', origin="lower", vmin = z_spin_min, vmax = z_spin_max, cmap=my_gradient )
+    axs[2].imshow( Sy_values', origin="lower", vmin = z_spin_min, vmax = z_spin_max, cmap=my_gradient, extent=[1, latt_params.Lx, 1, latt_params.Ly] )
     axs[2].set_xlabel(L"$x$")
     axs[2].set_title(L"$\left\langle S^y(x,y)\right\rangle$")
-    axs[3].imshow( Sz_values', origin="lower", vmin = z_spin_min, vmax = z_spin_max, cmap=my_gradient )
+    sz_im = axs[3].imshow( Sz_values', origin="lower", vmin = z_spin_min, vmax = z_spin_max, cmap=my_gradient, extent=[1, latt_params.Lx, 1, latt_params.Ly] )
     axs[3].set_xlabel(L"$x$")
     axs[3].set_title(L"$\left\langle S^z(x,y)\right\rangle$")
 
     fig.tight_layout()
+    sx_bbox = axs[1].get_position().bounds  # (x, y, width, height)
+    sz_bbox = axs[3].get_position().bounds 
+    @show sx_bbox
+    
+    # Now add the colorbar
+    fig.subplots_adjust(bottom=0.25)  # Move the bottom of the subplots up by 20%
+    cbar_width = sz_bbox[1] + sz_bbox[3] - sx_bbox[1]
+    cbar_axis = fig.add_axes([sx_bbox[1], 0.15, cbar_width, 0.05])
+    cbar = fig.colorbar(sz_im, cax=cbar_axis, orientation="horizontal")
+    cbar.set_label(L"\rm Spin\, Projection", loc="center")
+
+    fig_height = fig.get_figheight()
+    new_figheight = (sz_bbox[2] + sz_bbox[4]) * fig_height
+    fig.set_figheight(new_figheight)
     PyPlot.show()
 end
 
