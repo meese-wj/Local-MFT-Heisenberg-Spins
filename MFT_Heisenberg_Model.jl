@@ -10,7 +10,8 @@ include("FixedPointIteration.jl")
 include("PlotSpins.jl")
 
 function local_mft_heisenberg_main()
-    latt_params  = LatticeParameters( 50, 3 )
+    square_L = 17
+    latt_params  = LatticeParameters( square_L, 2 * square_L )
     model_params = ModelParameters( -1., 1000., 0.01 )
 
     nearest_neighbors = nearest_neighbor_table( latt_params )
@@ -24,6 +25,8 @@ function local_mft_heisenberg_main()
 
     plot_spin_chain(1, latt_params, mft_spins)
     plot_error_evolution( errors )
+    plot_spin_arrows(latt_params, mft_spins)
+    plot_spin_colormap(latt_params, mft_spins)
 end
 
 @time local_mft_heisenberg_main()

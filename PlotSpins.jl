@@ -2,14 +2,34 @@
 This file defines a bunch of different 
 plotting routines for Heisenberg spins.
 """
+
 using Revise
 using PyPlot
+using PyPlot.colors 
 
 PyPlot.rc("xtick", direction="in")
 PyPlot.rc("ytick", direction="in")
 
 include("LatticeSetup.jl")
 include("HeisenbergSpins.jl")
+
+"""
+Plot the fixed-point iteration algorithm error
+as a function of the iteration.
+"""
+function plot_error_evolution( all_errors )
+    first_flag = findfirst(x -> x == error_notice_flag, all_errors )
+    if first_flag === nothing
+        first_flag = length(all_errors)
+    end
+    PyPlot.figure()
+    PyPlot.loglog( LinRange( 1, first_flag-1, first_flag ), all_errors[begin : first_flag], lw=3 )
+    PyPlot.xlabel("Fixed-point iteration Step")
+    PyPlot.ylabel("Step-wise error per site")
+    PyPlot.grid(which="major")
+    PyPlot.tight_layout()
+    PyPlot.show()
+end
 
 """
 Extract the spin components and put them in
@@ -30,12 +50,18 @@ Plot a shaded region for the bounday spins. This is
 essentially a subroutine to clean up code.
 """
 function plot_boundary_spins( ax, num_boundary, latt_params )
-    ymin, ymax = ax[3].get_ylim()
+    ymin, ymax = 0., 0.
+    for axis in ax
+        ymin, ymax = axis.get_ylim()
+    end
     for component ∈ 1:3
         left_boundary = LinRange(1, num_boundary, 10)
         right_boundary = LinRange(latt_params.Lx + 1 - num_boundary, latt_params.Lx, 10)
         ax[component].fill_between( left_boundary, ymin .+  0 .* left_boundary , ymax .+ 0 .* left_boundary, color = "orange", alpha=0.3 )
         ax[component].fill_between( right_boundary, ymin .+  0 .* right_boundary , ymax .+ 0 .* right_boundary, color = "orange", alpha=0.3 )
+    end
+    for axis in ax
+        axis.set_ylim(ymin, ymax)
     end
     return ax
 end
@@ -66,25 +92,68 @@ function plot_spin_chain( yindex, latt_params, mft_spins )
 
     ax[3].set_xlabel(L"Site along chain $x$")
     ax[3].set_xlim(1, latt_params.Lx)
-    ax[3].set_ylim(ymin, ymax)
     fig.tight_layout()
     PyPlot.show()
 end
 
 """
-Plot the fixed-point iteration algorithm error
-as a function of the iteration.
+Plot the spins as arrows in 3D
 """
-function plot_error_evolution( all_errors )
-    first_flag = findfirst(x -> x == error_notice_flag, all_errors )
-    if first_flag === nothing
-        first_flag = length(all_errors)
+function plot_spin_arrows(latt_params, mft_spins)
+    z_plane_coord = 0.
+    xyz_coords = zeros( total_sites(latt_params), 3 )
+    for site ∈ 1:total_sites(latt_params)
+        coord = site_coords( site, latt_params )
+        xyz_coords[site, 1] = coord.xind
+        xyz_coords[site, 2] = coord.yind
+        xyz_coords[site, 3] = z_plane_coord
     end
-    PyPlot.figure()
-    PyPlot.loglog( LinRange( 1, first_flag-1, first_flag ), all_errors[begin : first_flag], lw=3 )
-    PyPlot.xlabel("Fixed-point iteration Step")
-    PyPlot.ylabel("Step-wise error per site")
-    PyPlot.grid(which="both")
-    PyPlot.tight_layout()
+
+    ax = PyPlot.figure().add_subplot(projection="3d")
+    ax.set_box_aspect((1,1,1))
+    for site ∈ 1:total_sites(latt_params)
+        ax.quiver( xyz_coords[site, 1], xyz_coords[site, 2], xyz_coords[site, 3],
+                   mft_spins[site].S₁, mft_spins[site].S₂, mft_spins[site].S₃,
+                   arrow_length_ratio=0.15 )
+    end
+    ax.set_xlabel(L"$x$")
+    ax.set_ylabel(L"$y$")
+    ax.set_zlabel(L"$z$")
+    ax.set_zlim(-latt_params.Lx/4, latt_params.Lx/4)
+    ax.grid(false)
+    PyPlot.show()    
+end
+
+"""
+Plot spin colormap
+"""
+function plot_spin_colormap(latt_params, mft_spins)
+    Sx_values = zeros(latt_params.Lx, latt_params.Ly)
+    Sy_values = zeros(latt_params.Lx, latt_params.Ly)
+    Sz_values = zeros(latt_params.Lx, latt_params.Ly)
+    for site ∈ 1:total_sites(latt_params)
+        coords = site_coords(site, latt_params)
+        Sx_values[coords.xind, coords.yind] = mft_spins[site].S₁
+        Sy_values[coords.xind, coords.yind] = mft_spins[site].S₂
+        Sz_values[coords.xind, coords.yind] = mft_spins[site].S₃
+    end
+
+    LinearSegmentedColormap.from_list("my_gradient", (
+                                      # Edit this gradient at https://eltos.github.io/gradient/#4C71FF-0025B3-000000-C7030D-FC4A53
+                                      (0.000, (0.298, 0.443, 1.000)),
+                                      (0.250, (0.000, 0.145, 0.702)),
+                                      (0.500, (0.000, 0.000, 0.000)),
+                                      (0.750, (0.780, 0.012, 0.051)),
+                                      (1.000, (0.988, 0.290, 0.325))))
+
+    z_spin_min, z_spin_max = minimum(Sz_values), maximum(Sz_values)
+
+    fig, axs = PyPlot.subplots(3, 1)
+    axs[1].imshow( Sx_values', origin="lower", vmin = z_spin_min, vmax = z_spin_max, cmap=my_gradient )
+    axs[2].imshow( Sy_values', origin="lower", vmin = z_spin_min, vmax = z_spin_max, cmap=my_gradient )
+    axs[3].imshow( Sz_values', origin="lower", vmin = z_spin_min, vmax = z_spin_max, cmap=my_gradient )
+
+    fig.tight_layout()
     PyPlot.show()
 end
+

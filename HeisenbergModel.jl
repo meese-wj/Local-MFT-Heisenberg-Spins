@@ -26,7 +26,7 @@ function initialize_spins!( lattice_spins, latt_params, model_params )
             lattice_spins[site] = copy( right_boundary )
         else
             # Randomize the bulk 
-            vector = Spin3( sin( π*(xdx - 2.)/(latt_params.Lx - 2.) ), 0., cos( π*(xdx - 2.)/(latt_params.Lx - 2.) ) )
+            vector = Spin3( 0., sin( π*(xdx - 2.)/(latt_params.Lx - 2.) ), cos( π*(xdx - 2.)/(latt_params.Lx - 2.) ) )
             vector += model_params.initial_randomness * Spin3( -1. + 2. * rand(), -1. + 2. * rand(), -1. + 2. * rand() )
             lattice_spins[site] = copy(unit_spin3(vector))
         end
