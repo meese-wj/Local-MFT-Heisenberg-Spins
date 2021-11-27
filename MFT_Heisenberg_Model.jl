@@ -18,7 +18,7 @@ function local_mft_heisenberg_main()
     lattice_spins = Array{Spin3}( undef, total_sites( latt_params ) )
     @time initialize_spins!(lattice_spins, latt_params, model_params)
     iteration_scheme = xy_plane_iteration_x_boundaries(latt_params)
-    # iteration_scheme = nothing
+    iteration_scheme = nothing
 
     @time mft_spins, errors = FixedPointIteration( (x, y, z, w) -> mft_lattice(x, y, z, w; iteration_scheme = iteration_scheme), 
                                                   average_spin_difference, lattice_spins,
