@@ -175,7 +175,6 @@ function plot_spin_colormap(latt_params, mft_spins)
     fig.tight_layout()
     sx_bbox = axs[1].get_position().bounds  # (x, y, width, height)
     sz_bbox = axs[3].get_position().bounds 
-    @show sx_bbox
     
     # Now add the colorbar
     fig.subplots_adjust(bottom=0.25)  # Move the bottom of the subplots up by 20%
@@ -184,6 +183,7 @@ function plot_spin_colormap(latt_params, mft_spins)
     cbar = fig.colorbar(sz_im, cax=cbar_axis, orientation="horizontal")
     cbar.set_label(L"\rm Spin\, Projection", loc="center")
 
+    # Crop the figure
     fig_height = fig.get_figheight()
     new_figheight = (sz_bbox[2] + sz_bbox[4]) * fig_height
     fig.set_figheight(new_figheight)
