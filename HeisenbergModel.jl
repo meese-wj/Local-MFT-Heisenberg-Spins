@@ -11,6 +11,7 @@ struct ModelParameters
 end
 
 temperature(params::ModelParameters) = 1/params.β
+checkerboard_stagger(Jex, xdx, ydx) = ( ( -1. * Jex / abs(Jex) ) ^ ( (xdx - 1) + (ydx - 1) ) )::Float64
 
 """
 Initialize lattice with random spins, but fix the boundary
@@ -21,14 +22,14 @@ function initialize_spins!( lattice_spins, latt_params, model_params )
     for ydx ∈ 1:latt_params.Ly, xdx ∈ 1:latt_params.Lx
         site = site_index( Site2D(xdx, ydx), latt_params )
         if xdx <= num_boundary_x_per_side
-            lattice_spins[site] = copy( left_boundary )
+            lattice_spins[site] = left_boundary  * checkerboard_stagger(model_params.Jex, xdx, ydx)
         elseif  xdx > latt_params.Lx - num_boundary_x_per_side
-            lattice_spins[site] = copy( right_boundary )
+            lattice_spins[site] = right_boundary * checkerboard_stagger(model_params.Jex, xdx, ydx)
         else
             # Randomize the bulk 
             vector = Spin3( 0., sin( π*(xdx - 2.)/(latt_params.Lx - 2.) ), cos( π*(xdx - 2.)/(latt_params.Lx - 2.) ) )
             # @show ( -1. * model_params.Jex / abs(model_params.Jex) ) ^ ( (xdx - 1) + (ydx - 1) )
-            vector *= ( -1. * model_params.Jex / abs(model_params.Jex) ) ^ ( (xdx - 1) + (ydx - 1) )
+            vector *= checkerboard_stagger( model_params.Jex, xdx, ydx )
             vector += model_params.initial_randomness * Spin3( -1. + 2. * rand(), -1. + 2. * rand(), -1. + 2. * rand() )
             lattice_spins[site] = copy(unit_spin3(vector))
         end
