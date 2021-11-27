@@ -87,4 +87,49 @@ function next_nearest_neighbor_table( latt_params::LatticeParameters ; num_neigh
     return neighbors
 end
 
+"""
+Iterate through the lattice in a way that 
+propagates the boundaries into the bulk in an unbiased
+way.  
+With the boundaries defined along the x axis, then do 
+following:
+    * Start at x = 1, and iterate through all y.
+    * Move to x = Lx and y = Ly, and iterate backwards 
+      through y to y = 1
+    * Now move to x = 2 and iterate through all y.
+    * Move to x = Lx-1 and y = Ly, and iterate backwards.
+    * Proceed to the middle.
+"""
+function xy_plane_iteration_x_boundaries( latt_params::LatticeParameters )
+    xy_plane_iteration::Vector{Int} = zeros( total_sites(latt_params) )
+    
+    x_values::Vector{Int} = zeros( latt_params.Lx )
+    y_start_values::Vector{Int} = zeros( latt_params.Lx )
+    xind = 1
+    left_xiter = 1
+    right_xiter = latt_params.Lx
+    while xind <= latt_params.Lx
+        if mod(xind + 1, 2) == 0
+            x_values[xind] = left_xiter
+            left_xiter += 1
+            y_start_values[xind] = 1
+        else
+            x_values[xind] = right_xiter
+            right_xiter -= 1
+            y_start_values[xind] = latt_params.Ly
+        end
+        xind += 1
+    end
+
+    site = 0
+    for xind ∈ 1:latt_params.Lx, yind ∈ 1:latt_params.Ly
+        site += 1
+        y_index = y_start_values[xind] == 1 ? yind : latt_params.Ly + 1 - yind
+        @show site, x_values[xind], y_index
+        xy_plane_iteration[site] = site_index( Site2D(x_values[xind], y_index), latt_params )
+    end
+
+    return xy_plane_iteration
+end
+
 neighbor = nearest_neighbor_table(LatticeParameters(5, 2))
