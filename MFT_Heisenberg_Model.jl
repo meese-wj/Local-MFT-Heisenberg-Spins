@@ -10,7 +10,7 @@ include("FixedPointIteration.jl")
 include("PlotSpins.jl")
 
 function local_mft_heisenberg_main()
-    square_L = 17
+    square_L = 25
     latt_params  = LatticeParameters( square_L, 2 * square_L )
     model_params = ModelParameters( -1., 1000., 0.01 )
 
