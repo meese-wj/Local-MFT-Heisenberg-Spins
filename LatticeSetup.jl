@@ -125,7 +125,6 @@ function xy_plane_iteration_x_boundaries( latt_params::LatticeParameters )
     for xind ∈ 1:latt_params.Lx, yind ∈ 1:latt_params.Ly
         site += 1
         y_index = y_start_values[xind] == 1 ? yind : latt_params.Ly + 1 - yind
-        @show site, x_values[xind], y_index
         xy_plane_iteration[site] = site_index( Site2D(x_values[xind], y_index), latt_params )
     end
 
