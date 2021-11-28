@@ -10,25 +10,63 @@ using PyCall
 
 PyPlot.rc("xtick", direction="in")
 PyPlot.rc("ytick", direction="in")
+PyPlot.rc("text",  usetex=true)   # This is slow upon startup due to TeX
 
 include("LatticeSetup.jl")
 include("HeisenbergSpins.jl")
+
+""" 
+Write a wrapper around the PyPlot 
+savefig function that also creates the
+file directory housing the figure output.
+
+If save_location is outside of the runtime
+directory, then a full path should be used.
+"""
+function figure_save_wrapper(figure, figure_name, save_location, extension; savefig_kwargs...)
+    if save_location === nothing
+        return 
+    end
+    save_location = mkpath(save_location)
+    ext = extension
+    if ext[1] == '.'
+        ext = extension[2:end]
+    end
+    fig_file = joinpath(save_location, "$figure_name.$ext")
+    figure.savefig(fig_file, bbox_inches="tight", savefig_kwargs...)
+    return
+end
+
+"""
+Use this to add model names to the figures.
+"""
+function prepend_model_name( model_name::String, file_string::String )
+    output = file_string
+    if length(model_name) > 0
+        output = "$(model_name)_$file_string"
+    end
+    return output
+end
 
 """
 Plot the fixed-point iteration algorithm error
 as a function of the iteration.
 """
-function plot_error_evolution( all_errors )
+function plot_error_evolution( all_errors; 
+                               model_name="", save_location=nothing, extension=".pdf" )
     first_flag = findfirst(x -> x == error_notice_flag, all_errors )
     if first_flag === nothing
         first_flag = length(all_errors)
     end
-    PyPlot.figure()
+    fig = PyPlot.figure()
     PyPlot.loglog( LinRange( 1, first_flag-1, first_flag ), all_errors[begin : first_flag], lw=3 )
-    PyPlot.xlabel("Fixed-point iteration Step")
-    PyPlot.ylabel("Step-wise error per site")
+    PyPlot.xlabel(L"\textrm{Fixed-point iteration}")
+    PyPlot.ylabel(L"\textrm{Error per site}")
     PyPlot.grid(which="major")
     PyPlot.tight_layout()
+
+    figure_save_wrapper( fig, prepend_model_name(model_name, "error_per_spin"), 
+                         save_location, extension )
     PyPlot.show()
 end
 
@@ -70,7 +108,8 @@ end
 """
 Plot a single spin chain with fixed yindex.
 """
-function plot_spin_chain( yindex, latt_params, mft_spins )
+function plot_spin_chain( yindex, latt_params, mft_spins; 
+                          model_name="", save_location=nothing, extension=".pdf" )
     mft_S = spins_to_array(latt_params, mft_spins)
     
     xvalues = LinRange(1, latt_params.Lx, latt_params.Lx)
@@ -91,16 +130,20 @@ function plot_spin_chain( yindex, latt_params, mft_spins )
 
     ax = plot_boundary_spins(ax, 2, latt_params)
 
-    ax[3].set_xlabel(L"Site along chain $x$")
+    ax[3].set_xlabel(L"$x$ {\rm site along chain}")
     ax[3].set_xlim(1, latt_params.Lx)
     fig.tight_layout()
+
+    figure_save_wrapper( fig, prepend_model_name(model_name, "LMFT_chain_projections"), 
+                         save_location, extension )
     PyPlot.show()
 end
 
 """
 Plot the spins as arrows in 3D
 """
-function plot_spin_arrows(latt_params, mft_spins)
+function plot_spin_arrows(latt_params, mft_spins; 
+                          model_name="", save_location=nothing, extension=".pdf")
     z_plane_coord = 0.
     xyz_coords = zeros( total_sites(latt_params), 3 )
     for site ∈ 1:total_sites(latt_params)
@@ -122,6 +165,9 @@ function plot_spin_arrows(latt_params, mft_spins)
     ax.set_zlabel(L"$z$")
     ax.set_zlim(-latt_params.Lx/4, latt_params.Lx/4)
     ax.grid(false)
+
+    figure_save_wrapper( fig, prepend_model_name(model_name, "LMFT_xy_plane_arrows"), 
+                         save_location, extension )
     PyPlot.show()    
 end
 
@@ -146,7 +192,7 @@ blue_orange_gradient = mpl_colors.LinearSegmentedColormap.from_list("blue_orange
 """
 Plot spin colormap
 """
-function plot_spin_colormap(latt_params, mft_spins)
+function plot_spin_colormap(latt_params, mft_spins; model_name="", save_location=nothing, extension=".pdf")
     Sx_values = zeros(latt_params.Lx, latt_params.Ly)
     Sy_values = zeros(latt_params.Lx, latt_params.Ly)
     Sz_values = zeros(latt_params.Lx, latt_params.Ly)
@@ -172,6 +218,10 @@ function plot_spin_colormap(latt_params, mft_spins)
     axs[3].set_xlabel(L"$x$")
     axs[3].set_title(L"$\left\langle S^z(x,y)\right\rangle$")
 
+    for comp ∈ 1:3
+        axs[comp].tick_params(which="both", bottom=false, left=false)
+    end
+
     fig.tight_layout()
     sx_bbox = axs[1].get_position().bounds  # (x, y, width, height)
     sz_bbox = axs[3].get_position().bounds 
@@ -187,6 +237,10 @@ function plot_spin_colormap(latt_params, mft_spins)
     fig_height = fig.get_figheight()
     new_figheight = (sz_bbox[2] + sz_bbox[4]) * fig_height
     fig.set_figheight(new_figheight)
+
+    figure_save_wrapper( fig, prepend_model_name(model_name, "LMFT_xy_plane_projections"), 
+                         save_location, extension )
+
     PyPlot.show()
 end
 

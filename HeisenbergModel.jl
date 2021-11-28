@@ -67,7 +67,7 @@ end
 """
 Calculate MFT for the lattice from an initial guess
 """
-function mft_lattice( lattice_spins, model_params::ModelParameters, latt_params::LatticeParameters, nearest_neighbors, iteration_scheme = nothing )
+function mft_lattice( lattice_spins, model_params::ModelParameters, latt_params::LatticeParameters, nearest_neighbors; iteration_scheme = nothing )
     new_spins = copy(lattice_spins)
     site_list = iteration_scheme
     if site_list === nothing
