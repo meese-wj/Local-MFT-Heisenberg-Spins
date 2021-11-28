@@ -10,6 +10,7 @@ using PyCall
 
 PyPlot.rc("xtick", direction="in")
 PyPlot.rc("ytick", direction="in")
+PyPlot.rc("font", size=12)        # Set this as the default size
 PyPlot.rc("text",  usetex=true)   # This is slow upon startup due to TeX
 
 include("LatticeSetup.jl")
@@ -118,6 +119,10 @@ function plot_spin_chain( yindex, latt_params, mft_spins;
         marker = "None"
     end
 
+    rcParams = PyPlot.PyDict(PyPlot.matplotlib."rcParams")
+    default_fontsize = rcParams["font.size"]
+    rcParams["font.size"] = 16
+
     fig, ax = PyPlot.subplots(3,1, figsize=(6,6), sharex=true, sharey=true)
     ax[1].plot( xvalues, mft_S[yindex, :, 1], marker=marker, mec="k", clip_on=false, zorder=20 )
     ax[1].set_ylabel("\$\\left\\langle S^x(x, $yindex) \\right\\rangle\$")
@@ -137,6 +142,7 @@ function plot_spin_chain( yindex, latt_params, mft_spins;
     figure_save_wrapper( fig, prepend_model_name(model_name, "LMFT_chain_projections"), 
                          save_location, extension )
     PyPlot.show()
+    rcParams["font.size"] = default_fontsize
 end
 
 """
