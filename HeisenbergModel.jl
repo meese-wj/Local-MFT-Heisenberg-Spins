@@ -27,10 +27,11 @@ function initialize_spins!( lattice_spins, latt_params, model_params )
             lattice_spins[site] = right_boundary * checkerboard_stagger(model_params.Jex, xdx, ydx)
         else
             # Randomize the bulk 
-            vector = Spin3( 0., sin( π*(xdx - 2.)/(latt_params.Lx - 2.) ), cos( π*(xdx - 2.)/(latt_params.Lx - 2.) ) )
+            vector = Spin3( 0., sin( π*(xdx - 2.)/(latt_params.Lx - 1.) ), cos( π*(xdx - 2.)/(latt_params.Lx - 1.) ) )
             # @show ( -1. * model_params.Jex / abs(model_params.Jex) ) ^ ( (xdx - 1) + (ydx - 1) )
             vector *= checkerboard_stagger( model_params.Jex, xdx, ydx )
-            vector += model_params.initial_randomness * Spin3( -1. + 2. * rand(), -1. + 2. * rand(), -1. + 2. * rand() )
+            ϕ, z = 2 * π * (-1. + 2. * rand()), -1. + 2. * rand()
+            vector += model_params.initial_randomness * Spin3( cos(ϕ) * sqrt(1 - z^2), sin(ϕ) * sqrt(1 - z^2), z )
             lattice_spins[site] = copy(unit_spin3(vector))
         end
     end
