@@ -89,7 +89,7 @@ function average_spin_difference( field1, field2 )
     diff = field1 .- field2
     error = 0.
     for spin ∈ diff
-        error += abs2(spin)
+        error += abs(spin)
     end
-    return sqrt(error) / length(diff)
+    return error / length(diff)
 end
