@@ -25,6 +25,7 @@ end
 
 function local_mft_heisenberg_main()
     figure_directory = raw"C:\Users\meese\Documents\Miscellaneous Notes\Local MFT Heisenberg Spins\Figures"
+    figure_directory = nothing
 
     square_L = 64
     latt_params  = LatticeParameters( square_L, square_L )

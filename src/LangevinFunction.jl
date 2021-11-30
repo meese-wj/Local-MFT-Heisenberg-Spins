@@ -2,7 +2,7 @@
 Compute the Langevin function as 
     coth βx - 1/x 
 but be careful about small x. Right now 
-this is accurate up to order O(beta¹¹x⁹).
+this is accurate up to order O(β⁹x⁹).
 """
 function LangevinFunction( x, β )
     arg = β * x
@@ -11,4 +11,12 @@ function LangevinFunction( x, β )
         return arg
     end
     return coth(arg) - 1/arg
+end
+
+"""
+Compute the Langevin function at zero
+temperature β = infinity
+"""
+function LangevinFunction( x )
+    return 1.
 end
