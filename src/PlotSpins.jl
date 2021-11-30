@@ -55,9 +55,11 @@ as a function of the iteration.
 """
 function plot_error_evolution( all_errors; 
                                model_name="", save_location=nothing, extension=".pdf" )
-    first_flag = findfirst(x -> x == error_notice_flag, all_errors )
+    @show first_flag = findfirst(x -> x == error_notice_flag, all_errors )
     if first_flag === nothing
         first_flag = length(all_errors)
+    else
+        first_flag -= 1
     end
     fig = PyPlot.figure()
     PyPlot.loglog( LinRange( 1, first_flag-1, first_flag ), all_errors[begin : first_flag], lw=3 )
@@ -122,8 +124,9 @@ function plot_spin_chain( yindex, latt_params, mft_spins;
     rcParams = PyPlot.PyDict(PyPlot.matplotlib."rcParams")
     default_fontsize = rcParams["font.size"]
     rcParams["font.size"] = 16
-
+    
     fig, ax = PyPlot.subplots(3,1, figsize=(6,6), sharex=true, sharey=true)
+    ax[1].set_ylim(-1., 1.)
     ax[1].plot( xvalues, mft_S[yindex, :, 1], marker=marker, mec="k", clip_on=false, zorder=20 )
     ax[1].set_ylabel("\$\\left\\langle S^x(x, $yindex) \\right\\rangle\$")
     
