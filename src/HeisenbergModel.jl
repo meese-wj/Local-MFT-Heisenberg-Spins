@@ -56,14 +56,18 @@ function effective_field_per_site( site, lattice_spins, params::ModelParameters,
 end
 
 """
+From an h field, calculate the ouptut spin 
+"""
+avg_spin( heff, β ) = unit_spin3( heff ) * LangevinFunction( abs(heff), β )
+
+"""
 Calculate the MFT spin at the site 
 """
 function mft_spin_per_site( site, lattice_spins, params::ModelParameters, nearest_neighbors, one_d )
     eff_field = effective_field_per_site(site, lattice_spins, params, nearest_neighbors, one_d)
-    output = unit_spin3( eff_field ) * LangevinFunction( abs(eff_field), params.β )
+    output = avg_spin( eff_field, params.β )
     return output
 end
-    
 
 """
 Calculate MFT for the lattice from an initial guess
