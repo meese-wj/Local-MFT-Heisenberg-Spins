@@ -24,14 +24,13 @@ function initialize_spins!( lattice_spins, latt_params, model_params::J1_J2_Mode
 
     for ydx ∈ 1:latt_params.Ly, xdx ∈ 1:latt_params.Lx
         site = site_index( Site2D(xdx, ydx), latt_params )
-        lattice_spins[site] = x_stripe_stagg(x_proj, Site2D(xind, yind) ) 
-        if xind > num_boundary_x_per_side && xind <= latt_params.Lx - num_boundary_x_per_side
+        lattice_spins[site] = x_stripe_stagg(x_proj, Site2D(xdx, ydx) ) 
+        if xdx > num_boundary_x_per_side && xdx <= latt_params.Lx - num_boundary_x_per_side
             # Randomize the bulk 
-            vector = x_stripe_stagg(x_proj, Site2D(xind, yind))
             ϕ, z = 2 * π * (-1. + 2. * rand()), -1. + 2. * rand()
-            vector += model_params.initial_randomness * Spin3( cos(ϕ) * sqrt(1 - z^2), sin(ϕ) * sqrt(1 - z^2), z )
-            lattice_spins[site] = copy(unit_spin3(vector))
+            lattice_spins[site] += model_params.J1_params.initial_randomness * Spin3( cos(ϕ) * sqrt(1 - z^2), sin(ϕ) * sqrt(1 - z^2), z )
         end
+        lattice_spins[site] = unit_spin3(lattice_spins[site])
     end
     return
 end
@@ -50,7 +49,7 @@ function effective_J1_J2_field_per_site( site, lattice_spins, params::J1_J2_Mode
     eff_field = effective_field_per_site( site, lattice_spins, params.J1_params, neighbors[1], one_d )
     
     # Now proceed with the J₂ contribution
-    num_neighbors = length(nearest_neighbors[site, :])
+    num_neighbors = length(neighbors[1][site, :])
     if one_d
         num_neighbors = 2
     end
@@ -79,7 +78,7 @@ function mft_lattice( lattice_spins, model_params::J1_J2_ModelParameters, latt_p
         site_list = 1:total_sites(latt_params)
     end
     for site ∈ site_list
-        if boundary_neighbor_value != nearest_neighbors[site, 1]
+        if boundary_neighbor_value != neighbors[1][site, 1]
             new_spins[ site ] = mft_spin_per_site( site, lattice_spins, model_params, neighbors, latt_params.Ly == 1 )  # TODO: For the J2 term, the 1d condition here is dubious.
         end
     end

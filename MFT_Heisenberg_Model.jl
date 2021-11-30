@@ -8,20 +8,7 @@ using Revise
 include("src/HeisenbergModel.jl")
 include("src/FixedPointIteration.jl")
 include("src/PlotSpins.jl")
-
-"""
-Determine whether the model is antiferromagnetic (AFM)
-or ferromagnetic (FM).
-"""
-function model_name( model_params::ModelParameters, latt_params::LatticeParameters ) 
-    name = ""
-    if model_params.Jex > 0.
-        name = "AFM"
-    elseif model_params.Jex < 0.
-        name = "FM"
-    end
-    return "$(name)_Lx-$(latt_params.Lx)_Ly-$(latt_params.Ly)"
-end        
+include("src/ModelNamingUtilities.jl")  
 
 function local_mft_heisenberg_main()
     figure_directory = raw"C:\Users\meese\Documents\Miscellaneous Notes\Local MFT Heisenberg Spins\Figures"
@@ -42,12 +29,12 @@ function local_mft_heisenberg_main()
                                                   model_params, latt_params, nearest_neighbors )
 
     plot_spin_chain(div(latt_params.Ly, 2), latt_params, mft_spins; 
-                    model_name=model_name(model_params, latt_params), save_location=figure_directory)
+                    model_name=model_name(model_params.Jex, latt_params), save_location=figure_directory)
     plot_error_evolution( errors; 
-                          model_name=model_name(model_params, latt_params), save_location=figure_directory)
+                          model_name=model_name(model_params.Jex, latt_params), save_location=figure_directory)
     # plot_spin_arrows(latt_params, mft_spins)
     plot_spin_colormap(latt_params, mft_spins; 
-                       model_name=model_name(model_params, latt_params), save_location=figure_directory)
+                       model_name=model_name(model_params.Jex, latt_params), save_location=figure_directory)
 end
 
 @time local_mft_heisenberg_main()
