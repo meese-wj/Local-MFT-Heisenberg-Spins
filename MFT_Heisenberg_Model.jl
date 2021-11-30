@@ -5,9 +5,9 @@ the Heisenberg model.
 
 using Revise
 
-include("HeisenbergModel.jl")
-include("FixedPointIteration.jl")
-include("PlotSpins.jl")
+include("src/HeisenbergModel.jl")
+include("src/FixedPointIteration.jl")
+include("src/PlotSpins.jl")
 
 """
 Determine whether the model is antiferromagnetic (AFM)
