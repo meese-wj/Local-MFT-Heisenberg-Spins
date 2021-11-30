@@ -131,4 +131,5 @@ function xy_plane_iteration_x_boundaries( latt_params::LatticeParameters )
     return xy_plane_iteration
 end
 
-neighbor = nearest_neighbor_table(LatticeParameters(5, 2))
+neighbor  = nearest_neighbor_table(LatticeParameters(5, 2))
+neighbor2 = next_nearest_neighbor_table(LatticeParameters( 6, 4 )) 
