@@ -29,12 +29,12 @@ function local_mft_heisenberg_main()
                                                   model_params, latt_params, nearest_neighbors )
 
     plot_spin_chain(div(latt_params.Ly, 2), latt_params, mft_spins; 
-                    model_name=model_name(model_params.Jex, latt_params), save_location=figure_directory)
+                    model_name=model_name(model_params, latt_params), save_location=figure_directory)
     plot_error_evolution( errors; 
-                          model_name=model_name(model_params.Jex, latt_params), save_location=figure_directory)
+                          model_name=model_name(model_params, latt_params), save_location=figure_directory)
     # plot_spin_arrows(latt_params, mft_spins)
     plot_spin_colormap(latt_params, mft_spins; 
-                       model_name=model_name(model_params.Jex, latt_params), save_location=figure_directory)
+                       model_name=model_name(model_params, latt_params), save_location=figure_directory)
 end
 
 @time local_mft_heisenberg_main()

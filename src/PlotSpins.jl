@@ -240,8 +240,6 @@ function plot_spin_colormap(latt_params, mft_spins; model_name="", save_location
     cbar = fig.colorbar(sz_im, cax=cbar_axis, orientation="horizontal")
     cbar.set_label(L"\rm Spin\, Projection", loc="center")
 
-    display(cbar)
-
     # Crop the figure
     fig_height = fig.get_figheight()
     new_figheight = (sz_bbox[2] + sz_bbox[4]) * fig_height

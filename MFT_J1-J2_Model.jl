@@ -14,7 +14,7 @@ function local_mft_J1_J2_main()
     figure_directory = raw"C:\Users\meese\Documents\Miscellaneous Notes\Local MFT Heisenberg Spins\Figures"
     figure_directory = nothing 
 
-    square_L = 32
+    square_L = 64
     latt_params  = LatticeParameters( square_L, square_L )
     model_params = J1_J2_ModelParameters( ModelParameters(0., 1000., 0.01 ), 1. )
 
@@ -32,12 +32,12 @@ function local_mft_J1_J2_main()
                                                   model_params, latt_params, neigbors )
 
     plot_spin_chain(div(latt_params.Ly, 2), latt_params, mft_spins; 
-                    model_name=model_name(model_params.J2_ex, latt_params), save_location=figure_directory)
+                    model_name=model_name(model_params, latt_params), save_location=figure_directory)
     plot_error_evolution( errors; 
-                          model_name=model_name(model_params.J2_ex, latt_params), save_location=figure_directory)
+                          model_name=model_name(model_params, latt_params), save_location=figure_directory)
     # plot_spin_arrows(latt_params, mft_spins)
     plot_spin_colormap(latt_params, mft_spins; 
-                       model_name=model_name(model_params.J2_ex, latt_params), save_location=figure_directory)
+                       model_name=model_name(model_params, latt_params), save_location=figure_directory)
 end
 
 @time local_mft_J1_J2_main()
