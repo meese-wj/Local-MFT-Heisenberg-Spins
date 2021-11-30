@@ -209,18 +209,19 @@ function plot_spin_colormap(latt_params, mft_spins; model_name="", save_location
         Sz_values[coords.xind, coords.yind] = mft_spins[site].S₃
     end
 
-    z_spin_min, z_spin_max = minimum(Sz_values), maximum(Sz_values)
+    cbar_min = min( min(minimum(Sx_values), minimum(Sy_values)), minimum(Sz_values) )
+    cbar_max = max( max(maximum(Sx_values), maximum(Sy_values)), maximum(Sz_values) )
     the_cmap = blue_orange_gradient
 
     fig, axs = PyPlot.subplots(1, 3, sharex=true, sharey=true)
-    axs[1].imshow( Sx_values', origin="lower", vmin = z_spin_min, vmax = z_spin_max, cmap=the_cmap, extent=[1, latt_params.Lx, 1, latt_params.Ly] )
+    axs[1].imshow( Sx_values', origin="lower", vmin = cbar_min, vmax = cbar_max, cmap=the_cmap, extent=[1, latt_params.Lx, 1, latt_params.Ly] )
     axs[1].set_title(L"$\left\langle S^x(x,y)\right\rangle$")
     axs[1].set_ylabel(L"$y$")
     axs[1].set_xlabel(L"$x$")
-    axs[2].imshow( Sy_values', origin="lower", vmin = z_spin_min, vmax = z_spin_max, cmap=the_cmap, extent=[1, latt_params.Lx, 1, latt_params.Ly] )
+    axs[2].imshow( Sy_values', origin="lower", vmin = cbar_min, vmax = cbar_max, cmap=the_cmap, extent=[1, latt_params.Lx, 1, latt_params.Ly] )
     axs[2].set_xlabel(L"$x$")
     axs[2].set_title(L"$\left\langle S^y(x,y)\right\rangle$")
-    sz_im = axs[3].imshow( Sz_values', origin="lower", vmin = z_spin_min, vmax = z_spin_max, cmap=the_cmap, extent=[1, latt_params.Lx, 1, latt_params.Ly] )
+    sz_im = axs[3].imshow( Sz_values', origin="lower", vmin = cbar_min, vmax = cbar_max, cmap=the_cmap, extent=[1, latt_params.Lx, 1, latt_params.Ly] )
     axs[3].set_xlabel(L"$x$")
     axs[3].set_title(L"$\left\langle S^z(x,y)\right\rangle$")
 
@@ -238,6 +239,8 @@ function plot_spin_colormap(latt_params, mft_spins; model_name="", save_location
     cbar_axis = fig.add_axes([sx_bbox[1], 0.15, cbar_width, 0.05])
     cbar = fig.colorbar(sz_im, cax=cbar_axis, orientation="horizontal")
     cbar.set_label(L"\rm Spin\, Projection", loc="center")
+
+    display(cbar)
 
     # Crop the figure
     fig_height = fig.get_figheight()
