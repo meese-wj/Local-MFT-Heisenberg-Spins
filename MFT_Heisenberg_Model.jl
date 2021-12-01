@@ -16,7 +16,7 @@ function local_mft_heisenberg_main()
 
     square_L = 20
     latt_params  = LatticeParameters( square_L, square_L )
-    model_params = ModelParameters( 1., 1000., 10.)
+    model_params = ModelParameters( -1., 1000., 10.)
 
     nearest_neighbors = nearest_neighbor_table( latt_params )
     lattice_spins = Array{Spin3}( undef, total_sites( latt_params ) )
@@ -28,7 +28,7 @@ function local_mft_heisenberg_main()
     @time mft_spins, errors, energies = FixedPointIteration( (x, y, z, w) -> mft_lattice(x, y, z, w; iteration_scheme = iteration_scheme), 
                                                               average_spin_difference, lattice_spins,
                                                               model_params, latt_params, nearest_neighbors; 
-                                                              maxiter=10000,
+                                                              maxiter=100000,
                                                               state_function = state_function )
 
     display(energies)
