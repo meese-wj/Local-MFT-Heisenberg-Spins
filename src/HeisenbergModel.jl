@@ -77,7 +77,7 @@ mft_energy_per_spin( eff_field, spin ) = -1. * eff_field ⋅ spin
 """
 Sweep the lattice and compute the total energy
 """
-function mft_energy_of_system( lattice_spins, params::ModelParameters, neighbors, one_d )
+function mft_energy_of_system( lattice_spins, params::ModelParameters, latt_params , neighbors, one_d )
     energy = 0.
     for site ∈ 1:length(lattice_spins)
         if boundary_neighbor_value != neighbors[site, 1]
@@ -85,7 +85,7 @@ function mft_energy_of_system( lattice_spins, params::ModelParameters, neighbors
             energy += mft_energy_per_spin( eff_field, lattice_spins[site] )
         end
     end
-    return energy
+    return energy / total_bulk_sites(latt_params)
 end
 
 """

@@ -55,17 +55,38 @@ as a function of the iteration.
 """
 function plot_error_evolution( all_errors; 
                                model_name="", save_location=nothing, extension=".pdf" )
-    @show first_flag = findfirst(x -> x == error_notice_flag, all_errors )
     if first_flag === nothing
         first_flag = length(all_errors)
     else
         first_flag -= 1
     end
-    display(all_errors)
     fig = PyPlot.figure()
     PyPlot.loglog( LinRange( 1, first_flag-1, first_flag ), all_errors[begin : first_flag], lw=3 )
     PyPlot.xlabel(L"$\mathrm{Fixed-point\, iteration}$")
     PyPlot.ylabel(L"$\mathrm{Error\, per\, site}$")
+    PyPlot.grid(which="major")
+    PyPlot.tight_layout()
+
+    figure_save_wrapper( fig, prepend_model_name(model_name, "error_per_spin"), 
+                         save_location, extension )
+    PyPlot.show()
+end
+
+"""
+Plot the fixed-point iteration algorithm error
+as a function of the iteration.
+"""
+function plot_energy_evolution( all_energies, all_errors; 
+                                model_name="", save_location=nothing, extension=".pdf" )
+    if first_flag === nothing
+        first_flag = length(all_errors)
+    else
+        first_flag -= 1
+    end
+    fig = PyPlot.figure()
+    PyPlot.semilogx( LinRange( 1, first_flag-1, first_flag ), all_energies[begin : first_flag], lw=3 )
+    PyPlot.xlabel(L"$\mathrm{Fixed-point\, iteration}$")
+    PyPlot.ylabel(L"$\mathrm{Mean\, field\, energy}$")
     PyPlot.grid(which="major")
     PyPlot.tight_layout()
 
