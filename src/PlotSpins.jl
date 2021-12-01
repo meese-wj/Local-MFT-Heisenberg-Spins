@@ -175,7 +175,7 @@ end
 """
 Plot the spins as arrows in 3D
 """
-function plot_spin_arrows(latt_params, mft_spins; 
+function plot_spin_arrows(latt_params, mft_spins; yindex = nothing,
                           model_name="", save_location=nothing, extension=".pdf")
     z_plane_coord = 0.
     xyz_coords = zeros( total_sites(latt_params), 3 )
@@ -186,17 +186,33 @@ function plot_spin_arrows(latt_params, mft_spins;
         xyz_coords[site, 3] = z_plane_coord
     end
 
-    ax = PyPlot.figure().add_subplot(projection="3d")
+    fig = PyPlot.figure()
+    ax = fig.add_subplot(projection="3d")
+    arrow_length = latt_params.Lx / 10.
     ax.set_box_aspect((1,1,1))
-    for site ∈ 1:total_sites(latt_params)
-        ax.quiver( xyz_coords[site, 1], xyz_coords[site, 2], xyz_coords[site, 3],
-                   mft_spins[site].S₁, mft_spins[site].S₂, mft_spins[site].S₃,
-                   arrow_length_ratio=0.15 )
+    if yindex === nothing
+        for site ∈ 1:total_sites(latt_params)
+            ax.quiver( xyz_coords[site, 1], xyz_coords[site, 2], xyz_coords[site, 3],
+                    mft_spins[site].S₁, mft_spins[site].S₂, mft_spins[site].S₃,
+                    arrow_length_ratio=0.15, length=arrow_length )
+        end
+    else
+        yindices = [ div(yindex, 2) yindex 3 * div(yindex, 2) ]
+        colors = ["blue" "red" "green"]
+        for (cdx, ydx) ∈ enumerate(yindices), xdx ∈ 1:latt_params.Lx
+            site = site_index( Site2D(xdx, ydx), latt_params )
+            ax.quiver3D( xyz_coords[site, 1], xyz_coords[site, 2], xyz_coords[site, 3],
+                    mft_spins[site].S₁, mft_spins[site].S₂, mft_spins[site].S₃,
+                    arrow_length_ratio=0.15, length=arrow_length, color=colors[cdx] )
+            
+        end
     end
     ax.set_xlabel(L"$x$")
     ax.set_ylabel(L"$y$")
     ax.set_zlabel(L"$z$")
-    ax.set_zlim(-latt_params.Lx/4, latt_params.Lx/4)
+    ax.set_xlim(0, latt_params.Lx)
+    ax.set_ylim(0, latt_params.Lx)
+    ax.set_zlim(-div(latt_params.Lx, 2), div(latt_params.Lx, 2))
     ax.grid(false)
 
     figure_save_wrapper( fig, prepend_model_name(model_name, "LMFT_xy_plane_arrows"), 

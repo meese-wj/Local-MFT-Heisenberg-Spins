@@ -58,7 +58,8 @@ end
 """
 From an h field, calculate the ouptut spin 
 """
-avg_spin( heff, β ) = unit_spin3( heff ) * LangevinFunction( abs(heff), β )
+avg_spin( heff, β ) = unit_spin3( heff )
+# avg_spin( heff, β ) = unit_spin3( heff ) * LangevinFunction( abs(heff), β )
 
 """
 Calculate the MFT spin at the site 
