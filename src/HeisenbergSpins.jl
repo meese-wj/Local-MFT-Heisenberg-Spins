@@ -20,3 +20,9 @@ unit_spin3(A::Spin3) = A * (1. / abs(A))
 Calculate the projection of 𝐀 in the direction of 𝐁
 """
 proj( A::Spin3, B::Spin3 ) = ( ( A ⋅ B ) / abs2( B ) ) * B 
+# Projection in the x-direction
+projx( A::Spin3 ) = Spin3( A.S₁, 0., 0. )
+# Projection in the y-direction
+projy( A::Spin3 ) = Spin3( 0., A.S₂, 0. )
+# Projection in the z-direction
+projz( A::Spin3 ) = Spin3( 0., 0., A.S₃ )
