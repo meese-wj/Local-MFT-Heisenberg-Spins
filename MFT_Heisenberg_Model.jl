@@ -22,7 +22,6 @@ function local_mft_heisenberg_main()
     lattice_spins = Array{Spin3}( undef, total_sites( latt_params ) )
     initialize_spins!(lattice_spins, latt_params, model_params)
     iteration_scheme = xy_plane_iteration_x_boundaries(latt_params)
-    iteration_scheme = nothing
     state_function = x -> mft_energy_of_system( x, model_params, latt_params, nearest_neighbors, latt_params.Ly == 1 ) 
 
     @time mft_spins, errors, energies = FixedPointIteration( (x, y, z, w) -> mft_lattice(x, y, z, w; iteration_scheme = iteration_scheme), 
@@ -31,14 +30,13 @@ function local_mft_heisenberg_main()
                                                               maxiter=100000,
                                                               state_function = state_function )
 
-    display(energies)
     plot_spin_chain(div(latt_params.Ly, 2), latt_params, mft_spins; 
                     model_name=model_name(model_params, latt_params), save_location=figure_directory)
     plot_error_evolution( errors; 
                           model_name=model_name(model_params, latt_params), save_location=figure_directory)
     plot_energy_evolution( energies, errors; 
                            model_name=model_name(model_params, latt_params), save_location=figure_directory)
-    plot_spin_arrows(latt_params, mft_spins; yindex = div(latt_params.Ly, 2))
+    plot_spin_arrows(latt_params, mft_spins; chains=true)
     plot_spin_colormap(latt_params, mft_spins; 
                        model_name=model_name(model_params, latt_params), save_location=figure_directory)
 end

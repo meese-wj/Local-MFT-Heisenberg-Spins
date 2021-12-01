@@ -175,7 +175,7 @@ end
 """
 Plot the spins as arrows in 3D
 """
-function plot_spin_arrows(latt_params, mft_spins; yindex = nothing,
+function plot_spin_arrows(latt_params, mft_spins; chains=false,
                           model_name="", save_location=nothing, extension=".pdf")
     z_plane_coord = 0.
     xyz_coords = zeros( total_sites(latt_params), 3 )
@@ -190,15 +190,15 @@ function plot_spin_arrows(latt_params, mft_spins; yindex = nothing,
     ax = fig.add_subplot(projection="3d")
     arrow_length = latt_params.Lx / 10.
     ax.set_box_aspect((1,1,1))
-    if yindex === nothing
+    if !chains
         for site ∈ 1:total_sites(latt_params)
             ax.quiver( xyz_coords[site, 1], xyz_coords[site, 2], xyz_coords[site, 3],
                     mft_spins[site].S₁, mft_spins[site].S₂, mft_spins[site].S₃,
                     arrow_length_ratio=0.15, length=arrow_length )
         end
     else
-        yindices = [ div(yindex, 2) yindex 3 * div(yindex, 2) ]
-        colors = ["blue" "red" "green"]
+        yindices = [ div(latt_params.Lx, 4) div(latt_params.Lx, 2) div(3 * latt_params.Lx, 4) ]
+        colors = ["red" "green" "blue"]
         for (cdx, ydx) ∈ enumerate(yindices), xdx ∈ 1:latt_params.Lx
             site = site_index( Site2D(xdx, ydx), latt_params )
             ax.quiver3D( xyz_coords[site, 1], xyz_coords[site, 2], xyz_coords[site, 3],
