@@ -52,7 +52,7 @@ function effective_field_per_site( site, lattice_spins, params::ModelParameters,
     for nn ∈ 1:num_neighbors
         eff_field += -params.Jex * lattice_spins[ nearest_neighbors[site, nn] ]
     end
-    return eff_field 
+    return eff_field
 end
 
 """

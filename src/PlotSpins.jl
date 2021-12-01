@@ -55,6 +55,7 @@ as a function of the iteration.
 """
 function plot_error_evolution( all_errors; 
                                model_name="", save_location=nothing, extension=".pdf" )
+    first_flag = findfirst(x -> x == error_notice_flag, all_errors )
     if first_flag === nothing
         first_flag = length(all_errors)
     else
@@ -78,6 +79,7 @@ as a function of the iteration.
 """
 function plot_energy_evolution( all_energies, all_errors; 
                                 model_name="", save_location=nothing, extension=".pdf" )
+    first_flag = findfirst(x -> x == error_notice_flag, all_errors )
     if first_flag === nothing
         first_flag = length(all_errors)
     else
