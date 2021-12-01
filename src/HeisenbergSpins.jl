@@ -15,3 +15,8 @@ Base.abs2(A::Spin3) = A ⋅ A
 Base.abs(A::Spin3) = sqrt( abs2(A) )
 Base.copy(A::Spin3) = Spin3( A.S₁, A.S₂, A.S₃ )
 unit_spin3(A::Spin3) = A * (1. / abs(A))
+
+"""
+Calculate the projection of 𝐀 in the direction of 𝐁
+"""
+proj( A::Spin3, B::Spin3 ) = ( ( A ⋅ B ) / abs2( B ) ) * B 
