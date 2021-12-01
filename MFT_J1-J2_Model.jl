@@ -14,7 +14,7 @@ function local_mft_J1_J2_main()
     figure_directory = raw"C:\Users\meese\Documents\Miscellaneous Notes\Local MFT Heisenberg Spins\Figures"
     figure_directory = nothing 
 
-    square_L = 50
+    square_L = 100
     latt_params  = LatticeParameters( square_L, square_L )
     model_params = J1_J2_ModelParameters( ModelParameters(0.1, 1000., 10.0 ), 1. )
 
