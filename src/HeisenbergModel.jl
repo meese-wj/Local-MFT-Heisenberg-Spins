@@ -70,6 +70,25 @@ function mft_spin_per_site( site, lattice_spins, params::ModelParameters, neares
 end
 
 """
+Calclate the MFT energy at a site as Eᵢ = 𝐡effⁱ ⋅ 𝐒ᵢ
+"""
+mft_energy_per_spin( eff_field, spin ) = -1. * eff_field ⋅ spin
+
+"""
+Sweep the lattice and compute the total energy
+"""
+function mft_energy_of_system( lattice_spins, params::ModelParameters, neighbors, one_d )
+    energy = 0.
+    for site ∈ 1:length(lattice_spins)
+        if boundary_neighbor_value != neighbors[site, 1]
+            eff_field = effective_field_per_site( site, lattice_spins, params, neighbors, one_d )
+            energy += mft_energy_per_spin( eff_field, lattice_spins[site] )
+        end
+    end
+    return energy
+end
+
+"""
 Calculate MFT for the lattice from an initial guess
 """
 function mft_lattice( lattice_spins, model_params::ModelParameters, latt_params::LatticeParameters, nearest_neighbors; iteration_scheme = nothing )

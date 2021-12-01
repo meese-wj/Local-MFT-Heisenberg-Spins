@@ -11,7 +11,7 @@ using PyCall
 PyPlot.rc("xtick", direction="in")
 PyPlot.rc("ytick", direction="in")
 PyPlot.rc("font", size=12)        # Set this as the default size
-PyPlot.rc("text",  usetex=true)   # This is slow upon startup due to TeX
+# PyPlot.rc("text",  usetex=true)   # This is slow upon startup due to TeX
 
 include("LatticeSetup.jl")
 include("HeisenbergSpins.jl")
@@ -61,10 +61,11 @@ function plot_error_evolution( all_errors;
     else
         first_flag -= 1
     end
+    display(all_errors)
     fig = PyPlot.figure()
     PyPlot.loglog( LinRange( 1, first_flag-1, first_flag ), all_errors[begin : first_flag], lw=3 )
-    PyPlot.xlabel(L"\textrm{Fixed-point iteration}")
-    PyPlot.ylabel(L"\textrm{Error per site}")
+    PyPlot.xlabel(L"$\mathrm{Fixed-point\, iteration}$")
+    PyPlot.ylabel(L"$\mathrm{Error\, per\, site}$")
     PyPlot.grid(which="major")
     PyPlot.tight_layout()
 
@@ -138,7 +139,7 @@ function plot_spin_chain( yindex, latt_params, mft_spins;
 
     ax = plot_boundary_spins(ax, 2, latt_params)
 
-    ax[3].set_xlabel(L"$x$ {\rm site along chain}")
+    ax[3].set_xlabel(L"$x$ $\mathrm{site\, along\, chain}$")
     ax[3].set_xlim(1, latt_params.Lx)
     fig.tight_layout()
 
