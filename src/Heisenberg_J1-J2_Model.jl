@@ -25,6 +25,7 @@ function initialize_spins!( lattice_spins, latt_params, model_params::J1_J2_Mode
     for ydx ∈ 1:latt_params.Ly, xdx ∈ 1:latt_params.Lx
         site = site_index( Site2D(xdx, ydx), latt_params )
         lattice_spins[site] = x_stripe_stagg(x_proj, Site2D(xdx, ydx) ) 
+        # lattice_spins[site] = y_stripe_stagg(y_proj, Site2D(xdx, ydx) ) 
         if xdx > num_boundary_x_per_side && xdx <= latt_params.Lx - num_boundary_x_per_side
             # Randomize the bulk 
             ϕ, z = 2 * π * (-1. + 2. * rand()), -1. + 2. * rand()
@@ -65,6 +66,15 @@ Calculate the J1-J2 MFT spin at the site
 function mft_spin_per_site( site, lattice_spins, params::J1_J2_ModelParameters, neighbors, one_d )
     eff_field = effective_J1_J2_field_per_site(site, lattice_spins, params, neighbors, one_d)
     output = avg_spin( eff_field, params.J1_params.β )
+    nnn_field = effective_field_per_site( site, lattice_spins, params.J1_params, neighbors[1], one_d )
+    nn_field = eff_field - nnn_field
+    # if site == 3
+    #     display(nn_field)
+    #     display(nnn_field)
+    #     display(output)
+    #     println()
+    #     println()
+    # end
     return output
 end
 
