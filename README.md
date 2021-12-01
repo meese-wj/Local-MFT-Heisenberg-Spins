@@ -10,3 +10,5 @@ conditions which need to be specified, and the y-direction has periodic boundary
 
 1. The `MFT_J1-J2_Model.jl` file runs a system with nearest and next-nearest neighbor bonds, on a lattice that looks like 
 that in 1.
+
+1. The `MFT_4-State_Stripes.jl` file runs a J<sub>1</sub>-J<sub>2</sub> model with a magnetoelastic anisotropy that pins the spin projection to the stripe direction in-plane. It also includes a uniaxial anisotropy term, as well as a nematic one. 
