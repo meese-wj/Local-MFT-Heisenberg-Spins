@@ -7,7 +7,7 @@ anisotropy.
 
 using Revise
 
-include("src/Heisenberg_J1-J2_Model.jl")
+include("src/Heisenberg_4-State_Stripes.jl")
 include("src/FixedPointIteration.jl")
 include("src/PlotSpins.jl")
 include("src/ModelNamingUtilities.jl")
@@ -18,7 +18,7 @@ function local_mft_4_State_Stripes_main()
 
     square_L = 10
     latt_params  = LatticeParameters( square_L, square_L )
-    model_params = J1_J2_ModelParameters( ModelParameters(0.1, 1000., 10.0 ), 1. )
+    model_params = MagElastic_Stripe_Params( 0., 1., 0., 0., 0., 1000., 0.5 )
 
     nearest_neighbors  = nearest_neighbor_table( latt_params )
     Nnearest_neighbors = next_nearest_neighbor_table( latt_params )
@@ -27,7 +27,7 @@ function local_mft_4_State_Stripes_main()
     lattice_spins = Array{Spin3}( undef, total_sites( latt_params ) )
     initialize_spins!(lattice_spins, latt_params, model_params)
     iteration_scheme = xy_plane_iteration_x_boundaries(latt_params)
-    state_function = x -> mft_J1_J2_energy_of_system( x, model_params, latt_params, neighbors, latt_params.Ly == 1 ) 
+    state_function = x -> mft_energy_of_system( x, model_params, latt_params, neighbors, latt_params.Ly == 1 ) 
 
 
     @time mft_spins, errors, energies = FixedPointIteration( (x, y, z, w) -> mft_lattice(x, y, z, w; iteration_scheme = iteration_scheme), 
@@ -47,4 +47,4 @@ function local_mft_4_State_Stripes_main()
                        model_name=model_name(model_params, latt_params), save_location=figure_directory)
 end
 
-@time local_mft_J1_J2_main()
+@time local_mft_4_State_Stripes_main()
