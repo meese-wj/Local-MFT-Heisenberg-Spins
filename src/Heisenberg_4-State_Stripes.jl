@@ -38,7 +38,8 @@ function nematicity( xindex, ε, Lx )
     width::Float64  = (Lx - 1)/3.
     xmin, xmax = floor(center - 0.5 * width), ceil(center + 0.5 * width)
     # if abs( xindex - center ) < width/2 - 1
-    if xindex >= xmin && xindex <= xmax
+    # if xindex >= xmin && xindex <= xmax
+    if xindex > num_boundary_x_per_side + 1 && xindex < Lx - num_boundary_x_per_side
         return -ε
     end
     return ε

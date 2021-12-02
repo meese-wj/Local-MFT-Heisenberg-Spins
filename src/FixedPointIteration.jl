@@ -40,7 +40,6 @@ function FixedPointIteration( func, metric, x₀, args...;
             all_states[iteration] = state_function( new_point )
         end
     end
-    display(all_errors)
     println("$iteration iterations completed with an error of $error.")
     if state_function === nothing 
         return new_point, all_errors, nothing
