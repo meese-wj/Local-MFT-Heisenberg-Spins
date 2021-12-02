@@ -18,8 +18,8 @@ function local_mft_4_State_Stripes_main()
 
     square_L = 100
     latt_params  = LatticeParameters( square_L, square_L )
-    model_params = MagElastic_Stripe_Params( J1_J2_ModelParameters( ModelParameters(0., 1000., 1.0),
-                                                                    1.0 ), 0.5, 1., -0.4 )
+    model_params = MagElastic_Stripe_Params( J1_J2_ModelParameters( ModelParameters(0., 1000., 10.0),
+                                                                    1.0 ), 0.2, 1., -0.2 )
 
     nearest_neighbors  = nearest_neighbor_table( latt_params )
     Nnearest_neighbors = next_nearest_neighbor_table( latt_params )
@@ -28,6 +28,7 @@ function local_mft_4_State_Stripes_main()
     lattice_spins = Array{Spin3}( undef, total_sites( latt_params ) )
     initialize_spins!(lattice_spins, latt_params, model_params)
     iteration_scheme = xy_plane_iteration_x_boundaries(latt_params)
+    # iteration_scheme = nothing
     state_function = x -> mft_energy_of_system( x, model_params, latt_params, neighbors, latt_params.Ly == 1 ) 
 
 

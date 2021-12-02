@@ -34,9 +34,8 @@ Calculate the nematicity as a function of position.
 Right now, keep it as a two steps.
 """
 function nematicity( site::Site2D, ε, Lx )
-    # return ε * ( 1. - 2. * convert(Float64, site.xind >= div(Lx, 4) && site.xind < div( 3 * Lx, 4 ) ) )
     # @show site, site.xind >= div(Lx, 4) && site.xind < div( 3 * Lx, 4 )
-    if site.xind >= div(Lx, 6) && site.xind < div( 5 * Lx, 6 )
+    if site.xind > round(Lx / 4) && site.xind < round( 3*Lx / 4 )
     # if site.xind == div(Lx, 2)
         return -ε
     end
@@ -48,13 +47,13 @@ Calculate the nematic anisotropy component to the effective field.
     
     𝐡eff = -ε( 𝐒ᵢ₊ₓ - 𝐒ᵢ₊y ), 
 
-so ε > 0 pulls the spins towards the vertical stripe state with 
+so ε < 0 pulls the spins towards the vertical stripe state with 
 ordering vector 𝐐 = (π, 0).
 """
 function nematic_anisotropy_field( site, lattice_spins, model_params::MagElastic_Stripe_Params, latt_params, nearest_neighbors )
     eff_field =  lattice_spins[ nearest_neighbors[site, 1] ] + lattice_spins[ nearest_neighbors[site, 2] ]
     eff_field -= lattice_spins[ nearest_neighbors[site, 3] ] + lattice_spins[ nearest_neighbors[site, 4] ]
-    return -nematicity( site_coords(site, latt_params), model_params.ε, latt_params.Lx - 2 * num_boundary_x_per_side ) * eff_field
+    return -nematicity( site_coords(site, latt_params), model_params.ε, latt_params.Lx ) * eff_field
 end
 
 """
@@ -123,7 +122,7 @@ function mft_lattice( lattice_spins, model_params::MagElastic_Stripe_Params, lat
     end
     for site ∈ site_list
         if boundary_neighbor_value != neighbors[1][site, 1]
-            new_spins[ site ] = mft_spin_per_site( site, lattice_spins, model_params, neighbors, latt_params.Ly == 1 )  # TODO: For the J2 term, the 1d condition here is dubious.
+            new_spins[ site ] = mft_spin_per_site( site, lattice_spins, model_params, latt_params, neighbors, latt_params.Ly == 1 )  # TODO: For the J2 term, the 1d condition here is dubious.
         end
     end
     return new_spins
