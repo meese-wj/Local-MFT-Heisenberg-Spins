@@ -18,12 +18,12 @@ function FixedPointIteration( func, metric, x₀, args...;
     old_point = copy(x₀) 
     new_point = zeros( size(x₀) )
     error = 1.
-    all_errors = error_notice_flag * ones(maxiter+1)
+    all_errors = error_notice_flag * ones(maxiter)
     all_errors[1] = error
 
     all_states = nothing
     if state_function !== nothing
-        all_states = zeros( maxiter+1 )
+        all_states = zeros( maxiter )
         all_states[1] = state_function( x₀ )
     end
     

@@ -12,7 +12,6 @@ struct MagElastic_Stripe_Params
     λ::Float64
     ε::Float64
     γ::Float64
-    MagElastic_Stripe_Params( J1::Float64, J2::Float64, λ, ε, γ, β, randomness ) = new( J1_J2_ModelParameters( ModelParameters(J1, β, randomness), J2 ), λ, ε, γ )    
 end
 
 """
@@ -31,17 +30,31 @@ Calculate the uniaxial anisotropy component to the effective field.
 uniaxial_anisotropy_field( spin::Spin3, model_params::MagElastic_Stripe_Params ) = -model_params.γ * projz( spin )
 
 """
+Calculate the nematicity as a function of position.
+Right now, keep it as a two steps.
+"""
+function nematicity( site::Site2D, ε, Lx )
+    # return ε * ( 1. - 2. * convert(Float64, site.xind >= div(Lx, 4) && site.xind < div( 3 * Lx, 4 ) ) )
+    # @show site, site.xind >= div(Lx, 4) && site.xind < div( 3 * Lx, 4 )
+    if site.xind >= div(Lx, 6) && site.xind < div( 5 * Lx, 6 )
+    # if site.xind == div(Lx, 2)
+        return -ε
+    end
+    return ε
+end
+
+"""
 Calculate the nematic anisotropy component to the effective field.
     
     𝐡eff = -ε( 𝐒ᵢ₊ₓ - 𝐒ᵢ₊y ), 
 
-so ε < 0 pulls the spins towards the horizontal stripe state with 
-ordering vector 𝐐 = (0, π).
+so ε > 0 pulls the spins towards the vertical stripe state with 
+ordering vector 𝐐 = (π, 0).
 """
-function nematic_anisotropy_field( site, lattice_spins, model_params::MagElastic_Stripe_Params, nearest_neighbors )
+function nematic_anisotropy_field( site, lattice_spins, model_params::MagElastic_Stripe_Params, latt_params, nearest_neighbors )
     eff_field =  lattice_spins[ nearest_neighbors[site, 1] ] + lattice_spins[ nearest_neighbors[site, 2] ]
     eff_field -= lattice_spins[ nearest_neighbors[site, 3] ] + lattice_spins[ nearest_neighbors[site, 4] ]
-    return -model_params.ε * eff_field
+    return -nematicity( site_coords(site, latt_params), model_params.ε, latt_params.Lx - 2 * num_boundary_x_per_side ) * eff_field
 end
 
 """
@@ -50,7 +63,7 @@ field.
     
     𝐡eff = -λ( Sᵢ₊ₓˣ ̂eˣ + Sᵢ₊yʸ ̂eʸ )
 
-so λ < 0 pulls the spins towards the horizontal stripe state with 
+so λ > 0 pulls the spins towards the horizontal stripe state with 
 ordering vector 𝐐 = (0, π) and spin projection ̂eˣ, or towards the 
 vertical stripe state with 𝐐 = (π, 0) and spin projection ̂eʸ.
 """
@@ -64,11 +77,11 @@ end
 Calculate the total effective field at each site from all
 contributions.
 """
-function effective_4_State_Stripe_field_per_site( site, lattice_spins, params::MagElastic_Stripe_Params, neighbors, one_d )
+function effective_4_State_Stripe_field_per_site( site, lattice_spins, params::MagElastic_Stripe_Params, latt_params, neighbors, one_d )
     # First grab the J₁-J₂ part
     eff_field = effective_J1_J2_field_per_site( site, lattice_spins, params.J1J2_params, neighbors, one_d )
     # Next grab the nematic part
-    eff_field += nematic_anisotropy_field( site, lattice_spins, params, neighbors[1] )
+    eff_field += nematic_anisotropy_field( site, lattice_spins, params, latt_params, neighbors[1] )
     # Then grab the magnetoelastic part
     eff_field += magnetoelastic_anisotropy_field( site, lattice_spins, params, neighbors[1] )
     # Finally include the on-site uniaxial anisotropy 
@@ -79,8 +92,8 @@ end
 """
 Calculate the J1-J2 MFT spin at the site 
 """
-function mft_spin_per_site( site, lattice_spins, params::MagElastic_Stripe_Params, neighbors, one_d )
-    eff_field = effective_4_State_Stripe_field_per_site(site, lattice_spins, params, neighbors, one_d)
+function mft_spin_per_site( site, lattice_spins, params::MagElastic_Stripe_Params, latt_params, neighbors, one_d )
+    eff_field = effective_4_State_Stripe_field_per_site(site, lattice_spins, params, latt_params, neighbors, one_d)
     output = avg_spin( eff_field, params.J1J2_params.J1_params.β )
     return output
 end
@@ -92,7 +105,7 @@ function mft_energy_of_system( lattice_spins, params::MagElastic_Stripe_Params, 
     energy = 0.
     for site ∈ 1:length(lattice_spins)
         if boundary_neighbor_value != neighbors[1][site, 1]
-            eff_field = effective_4_State_Stripe_field_per_site( site, lattice_spins, params, neighbors, one_d )
+            eff_field = effective_4_State_Stripe_field_per_site( site, lattice_spins, params, latt_params, neighbors, one_d )
             energy += mft_energy_per_spin( eff_field, lattice_spins[site] )
         end
     end

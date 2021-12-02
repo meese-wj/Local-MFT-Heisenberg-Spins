@@ -16,9 +16,10 @@ function local_mft_4_State_Stripes_main()
     figure_directory = raw"C:\Users\meese\Documents\Miscellaneous Notes\Local MFT Heisenberg Spins\Figures"
     figure_directory = nothing 
 
-    square_L = 10
+    square_L = 100
     latt_params  = LatticeParameters( square_L, square_L )
-    model_params = MagElastic_Stripe_Params( 0., 1., 0., 0., 0., 1000., 0.5 )
+    model_params = MagElastic_Stripe_Params( J1_J2_ModelParameters( ModelParameters(0., 1000., 1.0),
+                                                                    1.0 ), 0.5, 1., -0.4 )
 
     nearest_neighbors  = nearest_neighbor_table( latt_params )
     Nnearest_neighbors = next_nearest_neighbor_table( latt_params )
