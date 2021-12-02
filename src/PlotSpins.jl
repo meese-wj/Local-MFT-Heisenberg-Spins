@@ -160,7 +160,7 @@ function plot_spin_chain( yindex, latt_params, mft_spins;
     ax[3].plot( xvalues, mft_S[yindex, :, 3], marker=marker, mec="k", clip_on=false, zorder=20 )
     ax[3].set_ylabel("\$\\left\\langle S^z(x, $yindex) \\right\\rangle\$")
 
-    ax = plot_boundary_spins(ax, 2, latt_params)
+    ax = plot_boundary_spins(ax, num_boundary_x_per_side, latt_params)
 
     ax[3].set_xlabel(L"$x$ $\mathrm{site\, along\, chain}$")
     ax[3].set_xlim(1, latt_params.Lx)
@@ -292,5 +292,18 @@ function plot_spin_colormap(latt_params, mft_spins; model_name="", save_location
                          save_location, extension )
 
     PyPlot.show()
+end
+
+function plot_function_of_x( Lx, func::Function, ylabel::String )
+    xvalues = LinRange(1, Lx, Lx)
+    yvalues = func( xvalues )
+
+    fig, ax = PyPlot.subplots(1,1)
+    ax.plot(xvalues, yvalues)
+    ax.set_xlim(1, Lx)
+    ax.set_xlabel(L"$x$ $\mathrm{site\, along\, chain}$")
+    ax.set_ylabel(ylabel)
+    fig.tight_layout()
+    return
 end
 

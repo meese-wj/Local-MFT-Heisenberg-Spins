@@ -16,9 +16,9 @@ function local_mft_4_State_Stripes_main()
     figure_directory = raw"C:\Users\meese\Documents\Miscellaneous Notes\Local MFT Heisenberg Spins\Figures"
     figure_directory = nothing 
 
-    square_L = 100
+    square_L = 11
     latt_params  = LatticeParameters( square_L, square_L )
-    model_params = MagElastic_Stripe_Params( J1_J2_ModelParameters( ModelParameters(0., 1000., 10.0),
+    model_params = MagElastic_Stripe_Params( J1_J2_ModelParameters( ModelParameters(0., 1000., 100.0),
                                                                     1.0 ), 0.2, 1., -0.2 )
 
     nearest_neighbors  = nearest_neighbor_table( latt_params )
@@ -47,6 +47,7 @@ function local_mft_4_State_Stripes_main()
     plot_spin_arrows(latt_params, mft_spins; chains=true)
     plot_spin_colormap(latt_params, mft_spins; 
                        model_name=model_name(model_params, latt_params), save_location=figure_directory)
+    plot_function_of_x( latt_params.Lx, x -> nematicity.(x, model_params.ε, latt_params.Lx ), "\$\\mathrm{Strain}\$ \$\\varepsilon(x)\$" )
 end
 
 @time local_mft_4_State_Stripes_main()
