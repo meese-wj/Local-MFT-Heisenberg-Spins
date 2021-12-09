@@ -35,7 +35,7 @@ Right now, keep it as a two steps.
 """
 function nematicity( xindex, ε, Lx )
     center::Float64 = 1 + (Lx-1)/2.
-    width::Float64  = (Lx - 1)/3.
+    width::Float64  = (Lx - 1)/6.
     xmin, xmax = floor(center - 0.5 * width), ceil(center + 0.5 * width)
     # if abs( xindex - center ) < width/2 - 1
     if xindex >= xmin && xindex <= xmax
