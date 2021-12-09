@@ -86,10 +86,10 @@ function final_energies_with_system_size( γ2λ_values, λ, final_Lx )
 
     ax.legend(framealpha=1.0)
     ax.set_xlabel(L"$L_x$")
-    ax.set_ylabel(L"$E_{\mathrm{MFT}}$")
+    ax.set_ylabel(L"$E_{\mathrm{MF}}$ $\mathrm{per\, bulk\, spin}$ $(J_2)$")
     ax.set_title("\$ \\lambda = $λ \\, J_2 \$")
     PyPlot.show()
 end
 
-# @time local_mft_4_State_Stripes_main(; square_Lx=15, spin_plots=true)
-# @time final_energies_with_system_size( [-2.5 -2. -1.5 -1.0 -0.5 -0.25 -0.125], 0.01, 20)
+@time local_mft_4_State_Stripes_main(; square_Lx=12, spin_plots=false)
+@time final_energies_with_system_size( [-2.5 -2. -1.5 -1.0 -0.5 -0.25 -0.125], 0.2, 20)
