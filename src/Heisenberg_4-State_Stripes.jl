@@ -38,8 +38,8 @@ function nematicity( bond::Point, ε, Lx )
     width::Float64  = (Lx - 1)/3.
     xmin, xmax = floor(center - 0.5 * width), ceil(center + 0.5 * width)
     # if abs( bond.xind - center ) < width/2 - 1
-    # if bond.xind >= xmin && bond.xind <= xmax
-    if bond.xind > num_boundary_x_per_side + 1 && bond.xind < Lx - num_boundary_x_per_side
+    if bond.xind >= xmin && bond.xind <= xmax
+    # if bond.xind > num_boundary_x_per_side + 1 && bond.xind < Lx - num_boundary_x_per_side
         return -ε
     end
     return ε

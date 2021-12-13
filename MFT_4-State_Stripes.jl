@@ -17,9 +17,9 @@ function local_mft_4_State_Stripes_main(; λ=0.3, γ2λ=-0.1, square_Lx=8, spin_
     figure_directory = nothing 
 
     square_L = square_Lx
-    latt_params  = LatticeParameters( square_L, square_L + 1 )
-    model_params = MagElastic_Stripe_Params( J1_J2_ModelParameters( ModelParameters(0., 1000., 100.0),
-                                                                    1.0 ), λ, 1.0, γ2λ * λ )
+    latt_params  = LatticeParameters( square_L, square_L )
+    model_params = MagElastic_Stripe_Params( J1_J2_ModelParameters( ModelParameters(0.4, 1000., 100.0),
+                                                                    1.0 ), λ, 0.2, γ2λ * λ )
 
     nearest_neighbors  = nearest_neighbor_table( latt_params )
     Nnearest_neighbors = next_nearest_neighbor_table( latt_params )
@@ -91,5 +91,5 @@ function final_energies_with_system_size( γ2λ_values, λ, final_Lx )
     PyPlot.show()
 end
 
-@time local_mft_4_State_Stripes_main(; square_Lx=24, spin_plots=true)
+@time local_mft_4_State_Stripes_main(; square_Lx=32, spin_plots=true)
 # @time final_energies_with_system_size( [-2.5 -2. -1.5 -1.0 -0.5 -0.25 -0.125], 0.2, 20)
