@@ -30,9 +30,9 @@ function initialize_spins!( lattice_spins, latt_params, model_params::J1_J2_Mode
             # Randomize the bulk 
             ϕ, z = 2 * π * (-1. + 2. * rand()), -1. + 2. * rand()
             lattice_spins[site] += model_params.J1_params.initial_randomness * Spin3( cos(ϕ) * sqrt(1 - z^2), sin(ϕ) * sqrt(1 - z^2), z )
-        # elseif xdx > latt_params.Lx - num_boundary_x_per_side
-        #     lattice_spins[site] *= -1.
-        # end
+        elseif xdx > latt_params.Lx - num_boundary_x_per_side
+            lattice_spins[site] *= 1.
+        end
         lattice_spins[site] = unit_spin3(lattice_spins[site])
     end
     return
