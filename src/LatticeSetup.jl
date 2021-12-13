@@ -8,6 +8,8 @@ constant value of y -- two are on each side to help
 demonstrate the stripes.
 """
 
+using Base
+
 const num_nearest_neighbors = 4
 const num_next_nearest_neighbors = 4
 const boundary_neighbor_value = -2
@@ -29,6 +31,14 @@ total_bulk_sites( latt_params::LatticeParameters ) = total_sites(latt_params) - 
 site_index( site::Site2D, latt_params::LatticeParameters ) = (site.yind - 1) * latt_params.Lx + site.xind
 site_xindex( index::Int, latt_params::LatticeParameters ) = mod(index - 1, latt_params.Lx) + 1
 site_coords( index::Int, latt_params::LatticeParameters ) = Site2D( site_xindex(index, latt_params), 1 + div( index - 1, latt_params.Lx ) )
+
+Base.:+(A::Site2D, B::Site2D) = Site2D(A.x + B.x, A.y + B.y)
+Base.:-(A::Site2D, B::Site2D) = Site2D(A.x - B.x, A.y - B.y)
+Base.:*(A::Site2D, b::Number) = Site2D(A.x * b, A.y * b)
+Base.:*(b::Number, A::Site2D) = A * b
+
+midpoint( A::Site2D, B::Site2D ) = 0.5 * ( A + B )    
+
 """
 Construct the nearest neighbor table 
 """
