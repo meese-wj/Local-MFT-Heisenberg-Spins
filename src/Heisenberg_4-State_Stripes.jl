@@ -30,19 +30,34 @@ Calculate the uniaxial anisotropy component to the effective field.
 uniaxial_anisotropy_field( spin::Spin3, model_params::MagElastic_Stripe_Params ) = -model_params.γ * projz( spin )
 
 """
+Smooth ramp function on [-1, 1]
+"""
+smooth_ramp_11( x, Δ ) = tanh( x / Δ)
+"""
+Smooth ramp function on [0, 1]
+"""
+smooth_ramp_01( x, Δ ) = 0.5 * (1 + smooth_ramp_11(x, Δ))
+
+"""
+Smooth step by two ramps 
+"""
+smooth_step(x, center, dist, Δ) = smooth_ramp_11( center - dist - x, Δ ) + 2 * smooth_ramp_01(x - (center + dist), Δ)
+
+"""
 Calculate the nematicity as a function of position.
 Right now, keep it as a two steps.
 """
 function nematicity( bond::Point, ε, Lx )
     center::Float64 = 1 + (Lx-1)/2.
-    width::Float64  = (Lx - 1)/3.
+    width::Float64  = (Lx - 1)/12.
     xmin, xmax = floor(center - 0.5 * width), ceil(center + 0.5 * width)
     # if abs( bond.xind - center ) < width/2 - 1
-    if bond.xind >= xmin && bond.xind <= xmax
+    # if bond.xind >= xmin && bond.xind <= xmax
     # if bond.xind > num_boundary_x_per_side + 1 && bond.xind < Lx - num_boundary_x_per_side
-        return -ε
-    end
-    return ε
+    #     return -ε
+    # end
+    # return ε * smooth_ramp( bond.xind - center, width )
+    return ε * smooth_step( bond.xind, center, (Lx - 1)/6., width )
 end
 
 """

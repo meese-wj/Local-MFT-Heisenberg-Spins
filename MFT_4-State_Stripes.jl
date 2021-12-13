@@ -12,14 +12,14 @@ include("src/FixedPointIteration.jl")
 include("src/PlotSpins.jl")
 include("src/ModelNamingUtilities.jl")
 
-function local_mft_4_State_Stripes_main(; λ=0.3, γ2λ=-0.1, square_Lx=8, spin_plots=true)
+function local_mft_4_State_Stripes_main(; λ=0.25, γ2λ=-0.5, square_Lx=8, spin_plots=true)
     figure_directory = raw"C:\Users\meese\Documents\Miscellaneous Notes\Local MFT Heisenberg Spins\Figures"
     figure_directory = nothing 
 
     square_L = square_Lx
     latt_params  = LatticeParameters( square_L, square_L )
-    model_params = MagElastic_Stripe_Params( J1_J2_ModelParameters( ModelParameters(0.4, 1000., 100.0),
-                                                                    1.0 ), λ, 0.2, γ2λ * λ )
+    model_params = MagElastic_Stripe_Params( J1_J2_ModelParameters( ModelParameters(0.3, 1000., 100.0),
+                                                                    1.0 ), λ, 0.15, γ2λ * λ )
 
     nearest_neighbors  = nearest_neighbor_table( latt_params )
     Nnearest_neighbors = next_nearest_neighbor_table( latt_params )
