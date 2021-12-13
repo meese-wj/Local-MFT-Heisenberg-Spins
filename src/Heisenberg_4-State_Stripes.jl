@@ -53,6 +53,11 @@ Calculate the nematic anisotropy component to the effective field.
 so ε < 0 pulls the spins towards the vertical stripe state with 
 ordering vector 𝐐 = (π, 0).
 """
+# function nematic_anisotropy_field( site, lattice_spins, model_params::MagElastic_Stripe_Params, latt_params, nearest_neighbors )
+#     eff_field =  lattice_spins[ nearest_neighbors[site, 1] ] + lattice_spins[ nearest_neighbors[site, 2] ]
+#     eff_field -= lattice_spins[ nearest_neighbors[site, 3] ] + lattice_spins[ nearest_neighbors[site, 4] ]
+#     return -nematicity( site_xindex(site, latt_params), model_params.ε, latt_params.Lx ) * eff_field
+# end
 function nematic_anisotropy_field( site, lattice_spins, model_params::MagElastic_Stripe_Params, latt_params, nearest_neighbors )
     eff_field =  lattice_spins[ nearest_neighbors[site, 1] ] + lattice_spins[ nearest_neighbors[site, 2] ]
     eff_field -= lattice_spins[ nearest_neighbors[site, 3] ] + lattice_spins[ nearest_neighbors[site, 4] ]
