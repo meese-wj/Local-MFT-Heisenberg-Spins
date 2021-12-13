@@ -50,7 +50,6 @@ Right now, keep it as a two steps.
 function nematicity( bond::Point, ε, Lx )
     center::Float64 = 1 + (Lx-1)/2.
     width::Float64  = (Lx - 1)/12.
-    xmin, xmax = floor(center - 0.5 * width), ceil(center + 0.5 * width)
     # if abs( bond.xind - center ) < width/2 - 1
     # if bond.xind >= xmin && bond.xind <= xmax
     # if bond.xind > num_boundary_x_per_side + 1 && bond.xind < Lx - num_boundary_x_per_side
@@ -58,6 +57,7 @@ function nematicity( bond::Point, ε, Lx )
     # end
     # return ε * smooth_ramp( bond.xind - center, width )
     return ε * smooth_step( bond.xind, center, (Lx - 1)/6., width )
+    # return ε
 end
 
 """

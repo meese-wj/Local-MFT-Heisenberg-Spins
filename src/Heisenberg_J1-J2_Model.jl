@@ -38,6 +38,16 @@ function initialize_spins!( lattice_spins, latt_params, model_params::J1_J2_Mode
     return
 end
 
+function randomize_spins(lattice_spins, neighbor_table)
+    for site ∈ 1:length(lattice_spins)
+        # Randomize the bulk 
+        ϕ, z = 2 * π * (-1. + 2. * rand()), -1. + 2. * rand()
+        lattice_spins[site] += (neighbor_table[site, 1] != boundary_neighbor_value ) * Spin3( cos(ϕ) * sqrt(1 - z^2), sin(ϕ) * sqrt(1 - z^2), z )
+        lattice_spins[site] = unit_spin3( lattice_spins[site] )
+    end
+    return lattice_spins
+end
+
 """
 Calculate the effective field for the
 Heisenberg J₁-J₂ model. 

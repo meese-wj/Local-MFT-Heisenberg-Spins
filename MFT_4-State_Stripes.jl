@@ -12,14 +12,14 @@ include("src/FixedPointIteration.jl")
 include("src/PlotSpins.jl")
 include("src/ModelNamingUtilities.jl")
 
-function local_mft_4_State_Stripes_main(; λ=0.25, γ2λ=-0.5, square_Lx=8, spin_plots=true)
+function local_mft_4_State_Stripes_main(; λ=0.3, γ2λ=-2, square_Lx=8, spin_plots=true)
     figure_directory = raw"C:\Users\meese\Documents\Miscellaneous Notes\Local MFT Heisenberg Spins\Figures"
     figure_directory = nothing 
 
-    square_L = square_Lx
+    square_L = square_Lx 
     latt_params  = LatticeParameters( square_L, square_L )
-    model_params = MagElastic_Stripe_Params( J1_J2_ModelParameters( ModelParameters(0.3, 1000., 100.0),
-                                                                    1.0 ), λ, 0.15, γ2λ * λ )
+    model_params = MagElastic_Stripe_Params( J1_J2_ModelParameters( ModelParameters(0.1, 1000., 1000.),
+                                                                    1.0 ), λ, 0.2, γ2λ * λ )
 
     nearest_neighbors  = nearest_neighbor_table( latt_params )
     Nnearest_neighbors = next_nearest_neighbor_table( latt_params )
@@ -28,13 +28,13 @@ function local_mft_4_State_Stripes_main(; λ=0.25, γ2λ=-0.5, square_Lx=8, spin
     lattice_spins = Array{Spin3}( undef, total_sites( latt_params ) )
     initialize_spins!(lattice_spins, latt_params, model_params)
     iteration_scheme = xy_plane_iteration_x_boundaries(latt_params)
-    # iteration_scheme = nothing
+    iteration_scheme = nothing
     state_function = x -> mft_energy_of_system( x, model_params, latt_params, neighbors, latt_params.Ly == 1 ) 
 
 
     mft_spins, errors, energies = FixedPointIteration( (x, y, z, w) -> mft_lattice(x, y, z, w; iteration_scheme = iteration_scheme), 
                                                   average_spin_difference, lattice_spins,
-                                                  model_params, latt_params, neighbors; 
+                                                  model_params, latt_params, neighbors;
                                                   maxiter = 10000,
                                                   state_function=state_function )
 

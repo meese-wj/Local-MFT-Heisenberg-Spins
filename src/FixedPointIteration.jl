@@ -13,7 +13,7 @@ Fixed-point iteration solver.
       during the fixed-point procedure. If the state_function takes in 
       parameters, then include it as a λ-function.
 """
-function FixedPointIteration( func, metric, x₀, args...; 
+function FixedPointIteration( func, metric,x₀, args...;
                               tolerance=1e-10, maxiter=100, state_function=nothing )
     old_point = copy(x₀) 
     new_point = zeros( size(x₀) )
