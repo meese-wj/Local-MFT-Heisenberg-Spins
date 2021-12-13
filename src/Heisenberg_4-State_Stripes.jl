@@ -33,13 +33,13 @@ uniaxial_anisotropy_field( spin::Spin3, model_params::MagElastic_Stripe_Params )
 Calculate the nematicity as a function of position.
 Right now, keep it as a two steps.
 """
-function nematicity( xindex, ε, Lx )
+function nematicity( bond::Point, ε, Lx )
     center::Float64 = 1 + (Lx-1)/2.
-    width::Float64  = (Lx - 1)/6.
+    width::Float64  = (Lx - 1)/3.
     xmin, xmax = floor(center - 0.5 * width), ceil(center + 0.5 * width)
-    # if abs( xindex - center ) < width/2 - 1
-    if xindex >= xmin && xindex <= xmax
-    # if xindex > num_boundary_x_per_side + 1 && xindex < Lx - num_boundary_x_per_side
+    # if abs( bond.xind - center ) < width/2 - 1
+    # if bond.xind >= xmin && bond.xind <= xmax
+    if bond.xind > num_boundary_x_per_side + 1 && bond.xind < Lx - num_boundary_x_per_side
         return -ε
     end
     return ε
@@ -59,9 +59,13 @@ ordering vector 𝐐 = (π, 0).
 #     return -nematicity( site_xindex(site, latt_params), model_params.ε, latt_params.Lx ) * eff_field
 # end
 function nematic_anisotropy_field( site, lattice_spins, model_params::MagElastic_Stripe_Params, latt_params, nearest_neighbors )
-    eff_field =  lattice_spins[ nearest_neighbors[site, 1] ] + lattice_spins[ nearest_neighbors[site, 2] ]
-    eff_field -= lattice_spins[ nearest_neighbors[site, 3] ] + lattice_spins[ nearest_neighbors[site, 4] ]
-    return -nematicity( site_xindex(site, latt_params), model_params.ε, latt_params.Lx ) * eff_field
+    eff_field = Spin3(0., 0., 0.)
+    for nn ∈ 1:length(nearest_neighbors[site, :])
+        mid = midpoint( point2d_convert(site_coords( site, latt_params )), point2d_convert(site_coords( nearest_neighbors[site, nn], latt_params )) )
+        term = nematicity( mid, model_params.ε, latt_params.Lx ) * lattice_spins[ nearest_neighbors[site, nn] ]
+        eff_field += (1. - 2 * (nn > 2)) * term  
+    end
+    return -1. * eff_field
 end
 
 """

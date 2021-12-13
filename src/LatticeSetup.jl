@@ -20,9 +20,16 @@ struct LatticeParameters
     Ly::Int
 end
 
-struct Site2D
+abstract type Point{T <: Number} end
+
+struct Site2D <: Point{Int}
     xind::Int
     yind::Int
+end
+
+struct Point2D <: Point{Float64}
+    xind::Float64
+    yind::Float64
 end
 
 total_sites( latt_params::LatticeParameters ) = latt_params.Lx * latt_params.Ly
@@ -32,12 +39,13 @@ site_index( site::Site2D, latt_params::LatticeParameters ) = (site.yind - 1) * l
 site_xindex( index::Int, latt_params::LatticeParameters ) = mod(index - 1, latt_params.Lx) + 1
 site_coords( index::Int, latt_params::LatticeParameters ) = Site2D( site_xindex(index, latt_params), 1 + div( index - 1, latt_params.Lx ) )
 
-Base.:+(A::Site2D, B::Site2D) = Site2D(A.x + B.x, A.y + B.y)
-Base.:-(A::Site2D, B::Site2D) = Site2D(A.x - B.x, A.y - B.y)
-Base.:*(A::Site2D, b::Number) = Site2D(A.x * b, A.y * b)
-Base.:*(b::Number, A::Site2D) = A * b
+point2d_convert( A::Point ) = Point2D( convert(Float64, A.xind), convert(Float64, A.yind) )
+Base.:+(A::Point, B::Point) = Point2D(A.xind + B.xind, A.yind + B.yind)
+Base.:*(A::Point, b::Number) = Point2D(A.xind * b, A.yind * b)
+Base.:*(b::Number, A::Point) = A * b
+Base.:-(A::Point, B::Point) = A + (-1 * B)
 
-midpoint( A::Site2D, B::Site2D ) = 0.5 * ( A + B )    
+midpoint( A::Point2D, B::Point2D ) = 0.5 * ( A + B )   
 
 """
 Construct the nearest neighbor table 

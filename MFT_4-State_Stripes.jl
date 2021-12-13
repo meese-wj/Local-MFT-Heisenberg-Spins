@@ -17,9 +17,9 @@ function local_mft_4_State_Stripes_main(; λ=0.3, γ2λ=-0.1, square_Lx=8, spin_
     figure_directory = nothing 
 
     square_L = square_Lx
-    latt_params  = LatticeParameters( square_L, square_L )
-    model_params = MagElastic_Stripe_Params( J1_J2_ModelParameters( ModelParameters(0.4, 1000., 100.0),
-                                                                    1.0 ), λ, 0.2, γ2λ * λ )
+    latt_params  = LatticeParameters( square_L, square_L + 1 )
+    model_params = MagElastic_Stripe_Params( J1_J2_ModelParameters( ModelParameters(0., 1000., 100.0),
+                                                                    1.0 ), λ, 1.0, γ2λ * λ )
 
     nearest_neighbors  = nearest_neighbor_table( latt_params )
     Nnearest_neighbors = next_nearest_neighbor_table( latt_params )
@@ -48,7 +48,7 @@ function local_mft_4_State_Stripes_main(; λ=0.3, γ2λ=-0.1, square_Lx=8, spin_
         plot_spin_arrows(latt_params, mft_spins; chains=true)
         plot_spin_colormap(latt_params, mft_spins; 
                         model_name=model_name(model_params, latt_params), save_location=figure_directory)
-        plot_function_of_x( latt_params.Lx, x -> nematicity.(x, model_params.ε, latt_params.Lx ), "\$\\mathrm{Strain}\$ \$\\varepsilon(x)\$" )
+        plot_function_of_site( latt_params.Lx, x -> nematicity.(x, model_params.ε, latt_params.Lx ), "\$\\mathrm{Strain}\$ \$\\varepsilon(x)\$" )
         # return
     end
     

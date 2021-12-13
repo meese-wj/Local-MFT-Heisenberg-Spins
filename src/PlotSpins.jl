@@ -294,9 +294,9 @@ function plot_spin_colormap(latt_params, mft_spins; model_name="", save_location
     PyPlot.show()
 end
 
-function plot_function_of_x( Lx, func::Function, ylabel::String )
+function plot_function_of_site( Lx, func::Function, ylabel::String )
     xvalues = LinRange(1, Lx, Lx)
-    yvalues = func( xvalues )
+    yvalues = func( Point2D.(xvalues, 1) )
 
     fig, ax = PyPlot.subplots(1,1)
     ax.plot(xvalues, yvalues)
