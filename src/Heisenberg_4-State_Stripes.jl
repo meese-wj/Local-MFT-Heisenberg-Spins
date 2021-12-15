@@ -49,8 +49,8 @@ Right now, keep it as a two steps.
 """
 function nematicity( bond::Point, ε, Lx )
     center::Float64 = 1 + (Lx-1)/2.
-    width::Float64  = (Lx - 1)/48.
-    return ε * smooth_step( bond.xind, center, 0.05 * (Lx - 1), width )
+    width::Float64  = (Lx - 1)/12.
+    return ε * smooth_step( bond.xind, center, 0.25 * (Lx - 1), width )
 end
 
 """

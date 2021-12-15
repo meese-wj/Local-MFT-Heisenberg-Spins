@@ -3,7 +3,7 @@ const error_notice_flag = -2.
 """
 Mixing of old and new points between iterations
 """
-mixer( new_point, old_point, percent_new ) = percent_new .* new_point .+ (1 - percent_new) .* old_point
+mixer( new_point, old_point, percent_new; norm=x->x ) = norm.( percent_new .* new_point .+ (1 - percent_new) .* old_point )
 
 """
 Fixed-point iteration solver.
@@ -19,7 +19,8 @@ Fixed-point iteration solver.
       parameters, then include it as a λ-function.
 """
 function FixedPointIteration( func, metric,x₀, args...;
-                              tolerance=1e-12, maxiter=100, state_function=nothing )
+                              tolerance=1e-12, maxiter=100, state_function=nothing,
+                              mixer_norm=x->x )
     old_point = copy(x₀) 
     new_point = zeros( size(x₀) )
     error = 1.
@@ -38,7 +39,7 @@ function FixedPointIteration( func, metric,x₀, args...;
         iteration += 1
         new_point = func(old_point, args...)
         error = metric( new_point, old_point )
-        old_point = mixer( new_point, old_point, 0.05 )
+        old_point = mixer( new_point, old_point, 0.05; norm=mixer_norm )
         all_errors[iteration] = error
         # if iteration >= 50
         #     error_decreasing = all_errors[iteration] <= all_errors[iteration-1]
