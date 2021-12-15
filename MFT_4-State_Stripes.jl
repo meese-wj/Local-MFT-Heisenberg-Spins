@@ -12,14 +12,14 @@ include("src/FixedPointIteration.jl")
 include("src/PlotSpins.jl")
 include("src/ModelNamingUtilities.jl")
 
-function local_mft_4_State_Stripes_main(; λ=0.3, γ2λ=-2., square_Lx=8, spin_plots=true)
+function local_mft_4_State_Stripes_main(; λ=0.4, γ2λ=-2., square_Lx=8, spin_plots=true)
     figure_directory = raw"C:\Users\meese\Documents\Miscellaneous Notes\Local MFT Heisenberg Spins\Figures"
     figure_directory = nothing 
 
     square_L = square_Lx 
     latt_params  = LatticeParameters( square_L, square_L )
     model_params = MagElastic_Stripe_Params( J1_J2_ModelParameters( ModelParameters(0.5, 1000., 1000.),
-                                                                    1.0 ), λ, 0.2, γ2λ * λ )
+                                                                    1.0 ), λ, 0.3, γ2λ * λ )
 
     nearest_neighbors  = nearest_neighbor_table( latt_params )
     Nnearest_neighbors = next_nearest_neighbor_table( latt_params )
@@ -36,7 +36,7 @@ function local_mft_4_State_Stripes_main(; λ=0.3, γ2λ=-2., square_Lx=8, spin_p
                                                   (x, y) -> average_spin_difference(x, y, nearest_neighbors, latt_params),
                                                   lattice_spins,
                                                   model_params, latt_params, neighbors;
-                                                  maxiter = Int(1e5),
+                                                  maxiter = Int(5e4),
                                                   state_function=state_function )
 
     if spin_plots
@@ -51,7 +51,7 @@ function local_mft_4_State_Stripes_main(; λ=0.3, γ2λ=-2., square_Lx=8, spin_p
         plot_spin_arrows(latt_params, mft_spins; chains=true)
         plot_spin_colormap(latt_params, mft_spins; 
                         model_name=model_name(model_params, latt_params), save_location=figure_directory)
-        plot_function_of_site( latt_params.Lx, x -> nematicity.(x, model_params.ε, latt_params.Lx ), "\$\\mathrm{Strain}\$ \$\\varepsilon(x)\$" )
+        # plot_function_of_site( latt_params.Lx, x -> nematicity.(x, model_params.ε, latt_params.Lx ), "\$\\mathrm{Strain}\$ \$\\varepsilon(x)\$" )
         # return
     end
     
@@ -94,5 +94,5 @@ function final_energies_with_system_size( γ2λ_values, λ, final_Lx )
     PyPlot.show()
 end
 
-@time local_mft_4_State_Stripes_main(; square_Lx=64, spin_plots=true)
+@time local_mft_4_State_Stripes_main(; square_Lx=32, spin_plots=true)
 # @time final_energies_with_system_size( [-2.5 -2. -1.5 -1.0 -0.5 -0.25 -0.125], 0.2, 20)
