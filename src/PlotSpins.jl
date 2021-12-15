@@ -136,7 +136,8 @@ end
 Plot a single spin chain with fixed yindex.
 """
 function plot_spin_chain( yindex, latt_params, mft_spins; 
-                          model_name="", save_location=nothing, extension=".pdf" )
+                          model_name="", save_location=nothing, extension=".pdf",
+                          background_func=nothing )
     mft_S = spins_to_array(latt_params, mft_spins)
     
     xvalues = LinRange(1, latt_params.Lx, latt_params.Lx)
@@ -161,6 +162,20 @@ function plot_spin_chain( yindex, latt_params, mft_spins;
     ax[3].set_ylabel("\$\\left\\langle S^z(x, $yindex) \\right\\rangle\$")
 
     ax = plot_boundary_spins(ax, num_boundary_x_per_side, latt_params)
+
+    background=nothing 
+    if background_func !== nothing 
+        background = background_func( Point2D.(xvalues, yindex) )
+        background = background ./ maximum( abs.(background) )
+        for axis ∈ ax 
+            axis.plot( xvalues, background, color = "red", 
+                       lw=0.75, zorder = 0, clip_on=false )
+        end
+    end
+
+    for axis ∈ ax 
+        axis.axhline(0., lw=0.5, color="k", zorder=0)
+    end
 
     ax[3].set_xlabel(L"$x$ $\mathrm{site\, along\, chain}$")
     ax[3].set_xlim(1, latt_params.Lx)

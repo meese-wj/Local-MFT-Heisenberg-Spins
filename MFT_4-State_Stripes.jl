@@ -40,7 +40,9 @@ function local_mft_4_State_Stripes_main(; λ=0.3, γ2λ=-2, square_Lx=8, spin_pl
 
     if spin_plots
         plot_spin_chain(div(latt_params.Ly, 2), latt_params, mft_spins; 
-                        model_name=model_name(model_params, latt_params), save_location=figure_directory)
+                        model_name=model_name(model_params, latt_params), 
+                        save_location=figure_directory, 
+                        background_func = x -> nematicity.(x, model_params.ε, latt_params.Lx ) )
         plot_error_evolution( errors; 
                             model_name=model_name(model_params, latt_params), save_location=figure_directory)
         plot_energy_evolution( energies, errors; 
