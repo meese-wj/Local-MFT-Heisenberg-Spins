@@ -39,7 +39,7 @@ function FixedPointIteration( func, metric,x₀, args...;
         iteration += 1
         new_point = func(old_point, args...)
         error = metric( new_point, old_point )
-        old_point = mixer( new_point, old_point, 0.05; norm=mixer_norm )
+        old_point = mixer( new_point, old_point, 0.1; norm=mixer_norm )
         all_errors[iteration] = error
         # if iteration >= 50
         #     error_decreasing = all_errors[iteration] <= all_errors[iteration-1]
