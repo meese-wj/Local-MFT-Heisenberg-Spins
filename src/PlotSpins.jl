@@ -166,7 +166,9 @@ function plot_spin_chain( yindex, latt_params, mft_spins;
     background=nothing 
     if background_func !== nothing 
         background = background_func( Point2D.(xvalues, yindex) )
-        background = background ./ maximum( abs.(background) )
+        if maximum(abs.(background)) != 0.
+            background = background ./ maximum( abs.(background) )
+        end
         for axis ∈ ax 
             axis.plot( xvalues, background, color = "red", 
                        lw=0.75, zorder = 0, clip_on=false )

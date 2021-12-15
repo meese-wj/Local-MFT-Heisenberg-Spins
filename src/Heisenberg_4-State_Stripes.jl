@@ -56,7 +56,7 @@ function nematicity( bond::Point, ε, Lx )
     #     return -ε
     # end
     # return ε * smooth_ramp( bond.xind - center, width )
-    return ε * smooth_step( bond.xind, center, (Lx - 1)/4., width )
+    return ε * smooth_step( bond.xind, center, (Lx - 1)/6., width )
     # return ε
 end
 

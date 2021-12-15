@@ -35,7 +35,9 @@ function FixedPointIteration( func, metric,x₀, args...;
         error = metric( new_point, old_point )
         old_point = copy(new_point)
         all_errors[iteration] = error
-        # error_decreasing = all_errors[iteration] <= all_errors[iteration-1]
+        # if iteration >= 50
+        #     error_decreasing = all_errors[iteration] <= all_errors[iteration-1]
+        # end
         if state_function !== nothing 
             all_states[iteration] = state_function( new_point )
         end
