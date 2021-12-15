@@ -144,10 +144,8 @@ Calculate MFT for the lattice from an initial guess
 function mft_lattice( lattice_spins, model_params::MagElastic_Stripe_Params, latt_params::LatticeParameters, neighbors; iteration_scheme = nothing )
     new_spins = copy(lattice_spins)
     site_list = iteration_scheme
-    if site_list === nothing
-        site_list = 1:total_sites(latt_params)
-    end
-    for site ∈ site_list
+    Threads.@threads for site ∈ 1:total_sites(latt_params)
+    # for site ∈ site_list
         if boundary_neighbor_value != neighbors[1][site, 1]
             new_spins[ site ] = mft_spin_per_site( site, lattice_spins, model_params, latt_params, neighbors, latt_params.Ly == 1 )  # TODO: For the J2 term, the 1d condition here is dubious.
         end
