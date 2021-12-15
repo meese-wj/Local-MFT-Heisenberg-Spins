@@ -109,11 +109,11 @@ end
 """
 Calculate the difference between two field configurations
 """
-function average_spin_difference( field1, field2 )
+function average_spin_difference( field1, field2, neighbors, latt_params )
     diff = field1 .- field2
     error = 0.
-    for spin ∈ diff
-        error += abs(spin)
+    for (site, spin) ∈ enumerate(diff)
+        error += abs(spin) * (neighbors[site, 1] != boundary_neighbor_value)
     end
-    return error / length(diff)
+    return error / total_bulk_sites(latt_params)
 end

@@ -18,8 +18,8 @@ function local_mft_4_State_Stripes_main(; λ=0.3, γ2λ=-2, square_Lx=8, spin_pl
 
     square_L = square_Lx 
     latt_params  = LatticeParameters( square_L, square_L )
-    model_params = MagElastic_Stripe_Params( J1_J2_ModelParameters( ModelParameters(0.5, 1000., 1000.),
-                                                                    1.0 ), λ, 0., γ2λ * λ )
+    model_params = MagElastic_Stripe_Params( J1_J2_ModelParameters( ModelParameters(0.1, 1000., 1000.),
+                                                                    1.0 ), λ, 0.2, γ2λ * λ )
 
     nearest_neighbors  = nearest_neighbor_table( latt_params )
     Nnearest_neighbors = next_nearest_neighbor_table( latt_params )
@@ -33,7 +33,8 @@ function local_mft_4_State_Stripes_main(; λ=0.3, γ2λ=-2, square_Lx=8, spin_pl
 
 
     mft_spins, errors, energies = FixedPointIteration( (x, y, z, w) -> mft_lattice(x, y, z, w; iteration_scheme = iteration_scheme), 
-                                                  average_spin_difference, lattice_spins,
+                                                  (x, y) -> average_spin_difference(x, y, nearest_neighbors, latt_params),
+                                                  lattice_spins,
                                                   model_params, latt_params, neighbors;
                                                   maxiter = 10000,
                                                   state_function=state_function )
