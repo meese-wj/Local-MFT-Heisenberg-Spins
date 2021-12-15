@@ -3,6 +3,7 @@ include("LangevinFunction.jl")
 include("LatticeSetup.jl")
 
 using Random
+using FLoops
 
 struct ModelParameters
     Jex::Float64
@@ -112,8 +113,8 @@ Calculate the difference between two field configurations
 function average_spin_difference( field1, field2, neighbors, latt_params )
     diff = field1 .- field2
     error = 0.
-    for (site, spin) ∈ enumerate(diff)
-        error += abs(spin) * (neighbors[site, 1] != boundary_neighbor_value)
+    for site ∈ 1:length(diff)
+        error += abs(diff[site]) * (neighbors[site, 1] != boundary_neighbor_value)
     end
     return error / total_bulk_sites(latt_params)
 end
